@@ -135,7 +135,7 @@
     object-fit: contain;
     padding: 12px;
     box-sizing: border-box;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
 
   .cp-zoom-trigger {
@@ -293,7 +293,7 @@
   .cp-variant-header {
     display: flex;
     flex-direction: column;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
 
   .cp-variant-title {
@@ -311,18 +311,18 @@
 
   .cp-variant-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px;
   }
 
   .cp-vcard {
     position: relative;
     background: #ffffff;
     border: 2px solid #efe6d5;
-    border-radius: 12px;
-    padding: 18px 10px 14px;
+    border-radius: 14px;
+    padding: 20px 12px 16px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -330,13 +330,14 @@
   }
 
   .cp-vcard:hover {
-    border-color: #d5c7af;
+    border-color: #b88146;
+    transform: translateY(-2px);
   }
 
   .cp-vcard.selected {
     border-color: #b88146;
     background-color: #fffdf9;
-    box-shadow: 0 4px 14px rgba(184, 129, 70, 0.14);
+    box-shadow: 0 6px 16px rgba(184, 129, 70, 0.16);
   }
 
   .cp-vcard-top-tag {
@@ -348,7 +349,7 @@
     color: #ffffff;
     font-size: 0.65rem;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 2px 9px;
     border-radius: 4px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -357,10 +358,16 @@
   }
 
   .cp-vcard-img {
-    width: 58px;
-    height: 58px;
+    width: 90px;
+    height: 90px;
+    max-width: 100%;
     object-fit: contain;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
+  }
+
+  .cp-vcard:hover .cp-vcard-img {
+    transform: scale(1.06);
   }
 
   .cp-vcard-name-row {
@@ -368,7 +375,7 @@
     align-items: center;
     justify-content: center;
     gap: 4px;
-    font-size: 0.86rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #1c1917;
     margin-bottom: 4px;
@@ -394,7 +401,7 @@
     font-weight: 700;
     padding: 2px 8px;
     border-radius: 12px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 0.02em;
   }
@@ -408,14 +415,14 @@
 
   .cp-vcard-compare {
     font-family: 'Myanmar MN', 'Myanmar Sangam MN', serif !important;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     color: #a8a29e;
     text-decoration: line-through;
   }
 
   .cp-vcard-price {
     font-family: 'Myanmar MN', 'Myanmar Sangam MN', serif !important;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #1c1917;
   }
@@ -646,13 +653,26 @@
             
             <!-- Custom JSON Configured Cards -->
             {% for block in section.blocks %}
+              {% assign card_v_id = block.settings.variant_id %}
+              {% if card_v_id == blank and product.variants.size > forloop.index0 %}
+                {% assign card_v_id = product.variants[forloop.index0].id %}
+              {% endif %}
+              {% if card_v_id == blank %}
+                {% assign card_v_id = current_variant.id %}
+              {% endif %}
+
+              {% assign card_media = featured_media %}
+              {% if product.media.size > forloop.index0 %}
+                {% assign card_media = product.media[forloop.index0] %}
+              {% endif %}
+
               <div 
                 class="cp-vcard {% if forloop.first %}selected{% endif %}" 
-                data-variant-id="{{ block.settings.variant_id | default: current_variant.id }}"
+                data-variant-id="{{ card_v_id }}"
                 data-price="{{ block.settings.price | default: current_variant.price | money_without_trailing_zeros }}"
                 data-compare="{{ block.settings.compare_price | default: current_variant.compare_at_price | money_without_trailing_zeros }}"
                 data-discount="{{ block.settings.discount | default: initial_discount | append: '% OFF' }}"
-                data-img="{% if block.settings.card_image != blank %}{{ block.settings.card_image | image_url: width: 1000 }}{% else %}{{ featured_media | image_url: width: 1000 }}{% endif %}"
+                data-img="{% if block.settings.card_image != blank %}{{ block.settings.card_image | image_url: width: 1000 }}{% else %}{{ card_media | image_url: width: 1000 }}{% endif %}"
                 {{ block.shopify_attributes }}
               >
                 {% if block.settings.top_tag != blank %}
@@ -660,9 +680,9 @@
                 {% endif %}
 
                 {% if block.settings.card_image != blank %}
-                  <img src="{{ block.settings.card_image | image_url: width: 200 }}" class="cp-vcard-img" alt="{{ block.settings.title }}">
+                  <img src="{{ block.settings.card_image | image_url: width: 300 }}" class="cp-vcard-img" alt="{{ block.settings.title }}">
                 {% else %}
-                  <img src="{{ featured_media | image_url: width: 200 }}" class="cp-vcard-img" alt="{{ block.settings.title }}">
+                  <img src="{{ card_media | image_url: width: 300 }}" class="cp-vcard-img" alt="{{ block.settings.title }}">
                 {% endif %}
 
                 <div class="cp-vcard-name-row">
@@ -695,7 +715,7 @@
               data-img="{{ featured_media | image_url: width: 1000 }}"
             >
               <div class="cp-vcard-top-tag">BEST VALUE</div>
-              <img src="{{ featured_media | image_url: width: 200 }}" class="cp-vcard-img" alt="Transformation Pack">
+              <img src="{{ featured_media | image_url: width: 300 }}" class="cp-vcard-img" alt="Transformation Pack">
               <div class="cp-vcard-name-row">
                 <span>Transformation</span>
                 <svg class="cp-vcard-check" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
@@ -707,15 +727,16 @@
               </div>
             </div>
 
+            {% assign media_2 = product.media[1] | default: featured_media %}
             <div 
               class="cp-vcard" 
               data-variant-id="{{ current_variant.id }}"
               data-price="₹849"
               data-compare="₹999"
               data-discount="15% OFF"
-              data-img="{{ featured_media | image_url: width: 1000 }}"
+              data-img="{{ media_2 | image_url: width: 1000 }}"
             >
-              <img src="{{ featured_media | image_url: width: 200 }}" class="cp-vcard-img" alt="Progress Pack">
+              <img src="{{ media_2 | image_url: width: 300 }}" class="cp-vcard-img" alt="Progress Pack">
               <div class="cp-vcard-name-row">
                 <span>Progress</span>
                 <svg class="cp-vcard-check" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
@@ -727,15 +748,16 @@
               </div>
             </div>
 
+            {% assign media_3 = product.media[2] | default: featured_media %}
             <div 
               class="cp-vcard" 
               data-variant-id="{{ current_variant.id }}"
               data-price="₹449"
               data-compare="₹499"
               data-discount="10% OFF"
-              data-img="{{ featured_media | image_url: width: 1000 }}"
+              data-img="{{ media_3 | image_url: width: 1000 }}"
             >
-              <img src="{{ featured_media | image_url: width: 200 }}" class="cp-vcard-img" alt="Starter Pack">
+              <img src="{{ media_3 | image_url: width: 300 }}" class="cp-vcard-img" alt="Starter Pack">
               <div class="cp-vcard-name-row">
                 <span>Starter Pack</span>
                 <svg class="cp-vcard-check" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
@@ -784,7 +806,7 @@
                   <div class="cp-vcard-top-tag">SAVE {{ v_discount }}%</div>
                 {% endif %}
 
-                <img src="{{ v_img | image_url: width: 200 }}" class="cp-vcard-img" alt="{{ variant.title }}">
+                <img src="{{ v_img | image_url: width: 300 }}" class="cp-vcard-img" alt="{{ variant.title }}">
                 <div class="cp-vcard-name-row">
                   <span>{{ variant.title }}</span>
                   <svg class="cp-vcard-check" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
@@ -865,16 +887,16 @@
         this.classList.add('active');
         const newImgUrl = this.getAttribute('data-img-url');
         if (mainImg && newImgUrl) {
-          mainImg.style.opacity = '0.4';
+          mainImg.style.opacity = '0.3';
           setTimeout(() => {
             mainImg.src = newImgUrl;
             mainImg.style.opacity = '1';
-          }, 150);
+          }, 120);
         }
       });
     });
 
-    // Variant Card Clicks
+    // Variant / Combo Card Clicks
     vcards.forEach(card => {
       card.addEventListener('click', function() {
         vcards.forEach(c => c.classList.remove('selected'));
@@ -886,7 +908,12 @@
         const discount = this.getAttribute('data-discount');
         const imgUrl = this.getAttribute('data-img');
 
-        if (variantInput && variantId) variantInput.value = variantId;
+        // Update form variant ID for correct checkout price
+        if (variantInput && variantId) {
+          variantInput.value = variantId;
+        }
+
+        // Update prices
         if (priceDisplay && price) priceDisplay.textContent = price;
 
         if (compareDisplay) {
@@ -907,12 +934,21 @@
           }
         }
 
+        // Update main preview image & sync thumbnail highlight
         if (mainImg && imgUrl) {
-          mainImg.style.opacity = '0.4';
+          mainImg.style.opacity = '0.3';
           setTimeout(() => {
             mainImg.src = imgUrl;
             mainImg.style.opacity = '1';
-          }, 150);
+          }, 120);
+
+          thumbnails.forEach(thumb => {
+            const thumbUrl = thumb.getAttribute('data-img-url');
+            if (thumbUrl && (thumbUrl === imgUrl || imgUrl.includes(thumbUrl.split('?')[0]))) {
+              thumbnails.forEach(t => t.classList.remove('active'));
+              thumb.classList.add('active');
+            }
+          });
         }
       });
     });
