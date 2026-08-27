@@ -145,7 +145,11 @@
     <div class="eoc-grid">
       {% for block in section.blocks %}
         {% assign card_img = block.settings.image %}
-        {% assign card_url = block.settings.link | default: '/collections/all' %}
+        {% assign raw_link = block.settings.link %}
+        {% assign card_url = raw_link.url | default: raw_link %}
+        {% if card_url contains 'shopify://' or card_url == blank or card_url == '#' %}
+          {% assign card_url = '/collections/all' %}
+        {% endif %}
         
         <article class="eoc-card" {{ block.shopify_attributes }}>
           <a href="{{ card_url }}" class="eoc-card-link">

@@ -149,8 +149,8 @@
     <!-- Section Header -->
     <div class="ai-dome-cards-{{ ai_gen_id }}__header">
 
-      {% assign subheading_text = block.settings.subheading %}
-      {% if subheading_text == blank %}
+      {% assign subheading_text = block.settings.subheading | strip %}
+      {% if subheading_text == blank or subheading_text.size == 0 %}
         {% assign subheading_text = "FIND YOUR PERFECT PICK" %}
       {% endif %}
       <div class="ai-dome-cards-{{ ai_gen_id }}__subheading ai-dome-subheading">
@@ -179,10 +179,10 @@
           assign image = block.settings[image_key]
           assign title = block.settings[title_key]
           assign text = block.settings[text_key]
-          assign link = block.settings[link_key]
+          assign raw_link = block.settings[link_key]
 
-          assign card_url = link
-          if card_url == blank
+          assign card_url = raw_link.url | default: raw_link
+          if card_url contains 'shopify://' or card_url == blank or card_url == '#'
             assign card_url = '/collections/all'
           endif
         %}
