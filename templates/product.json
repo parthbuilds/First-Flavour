@@ -1,16 +1,16 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "custom-product-template",
-      "settings": {
-        "variant_heading": "Pick Your Size & Combo",
-        "variant_subheading": "Select your favorite variant or combo pack for your wellness goal.",
-        "feature_pill_text": "Plant Based Plastic Free",
-        "left_badge_text": "New Launch",
-        "right_badge_text": "",
-        "shipping_text": "Free shipping above \u20b9499 | Express Delivery across the country.",
-        "trust_text": "Trusted by 50 lakh+ customers worldwide."
-      },
       "blocks": {
         "card_1": {
           "type": "custom_card",
@@ -18,9 +18,10 @@
             "title": "Transformation",
             "size_tag": "30 DAY KIT / 1 KG",
             "top_tag": "BEST VALUE",
-            "price": "\u20b91,199",
-            "compare_price": "\u20b91,499",
-            "discount": "20"
+            "price": "₹1,199",
+            "compare_price": "₹1,499",
+            "discount": "20",
+            "variant_id": ""
           }
         },
         "card_2": {
@@ -29,9 +30,10 @@
             "title": "Progress",
             "size_tag": "20 DAY KIT / 500G",
             "top_tag": "",
-            "price": "\u20b9849",
-            "compare_price": "\u20b9999",
-            "discount": "15"
+            "price": "₹849",
+            "compare_price": "₹999",
+            "discount": "15",
+            "variant_id": ""
           }
         },
         "card_3": {
@@ -40,9 +42,10 @@
             "title": "Starter Pack",
             "size_tag": "10 DAY KIT / 250G",
             "top_tag": "",
-            "price": "\u20b9449",
-            "compare_price": "\u20b9499",
-            "discount": "10"
+            "price": "₹449",
+            "compare_price": "₹499",
+            "discount": "10",
+            "variant_id": ""
           }
         }
       },
@@ -50,7 +53,16 @@
         "card_1",
         "card_2",
         "card_3"
-      ]
+      ],
+      "settings": {
+        "variant_heading": "Pick Your Size & Combo",
+        "variant_subheading": "Select your favorite variant or combo pack for your wellness goal.",
+        "feature_pill_text": "Plant Based Plastic Free",
+        "left_badge_text": "New Launch",
+        "right_badge_text": "",
+        "shipping_text": "Free shipping above ₹499 | Express Delivery across the country.",
+        "trust_text": "Trusted by 50 lakh+ customers worldwide."
+      }
     },
     "product_recommendations_qggXJq": {
       "type": "product-recommendations",
@@ -59,19 +71,67 @@
           "type": "text",
           "name": "t:names.header",
           "settings": {
-            "text": "<h3>You may also like </h3>"
-          }
+            "text": "<h3>You may also like </h3>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "static-product-card": {
+          "type": "_product-card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 16,
+            "background_color": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         }
       },
       "block_order": [
         "text_cbcgyb"
       ],
       "settings": {
-        "product": "{{ closest.product }}",
+        "product": "{{ product }}",
         "recommendation_type": "related",
         "layout_type": "grid",
+        "carousel_on_mobile": false,
         "max_products": 4,
-        "columns": 4
+        "columns": 4,
+        "mobile_columns": "2",
+        "columns_gap": 16,
+        "rows_gap": 16,
+        "icons_style": "arrow",
+        "icons_shape": "none",
+        "section_width": "page-width",
+        "gap": 12,
+        "background_color": "",
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     }
   },
