@@ -1,6 +1,6 @@
 {% doc %}
   @prompt
-    Explore our collection section with black subheading, black and gold main heading, and fully clickable card image & title
+    Explore our collection section with solid black subheading, black and gold heading, and fully clickable card image & title
 {% enddoc %}
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
@@ -8,7 +8,7 @@
   .ai-dome-cards-{{ ai_gen_id }} { display: block; width: 100%; max-width: 100%; padding: {{ block.settings.section_padding }}px 0; color: {{ block.settings.text_color }}; background-color: {{ block.settings.section_background }}; }
   .ai-dome-cards-{{ ai_gen_id }}__inner { width: {{ block.settings.desktop_width_percent }}%; max-width: 100%; margin: 0 auto; }
   .ai-dome-cards-{{ ai_gen_id }}__header { margin-bottom: 28px; text-align: {{ block.settings.heading_alignment }}; }
-  .ai-dome-cards-{{ ai_gen_id }}__subheading { font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.08em; color: #000000 !important; margin-bottom: 6px; text-transform: uppercase; }
+  .ai-dome-cards-{{ ai_gen_id }}__subheading { font-family: 'Outfit', sans-serif; font-size: 0.92rem; font-weight: 600; letter-spacing: 0.08em; color: #000000 !important; margin-bottom: 6px; text-transform: uppercase; }
   .ai-dome-cards-{{ ai_gen_id }}__heading { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: {{ block.settings.heading_size }}px; line-height: 1.25; font-weight: 700; color: #000000; }
   .ai-dome-cards-{{ ai_gen_id }}__heading span.gold-text { color: #b88146; }
   .ai-dome-cards-{{ ai_gen_id }}__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: {{ block.settings.card_gap }}px; }
@@ -34,9 +34,11 @@
 <div class="ai-dome-cards-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
   <div class="ai-dome-cards-{{ ai_gen_id }}__inner">
     <div class="ai-dome-cards-{{ ai_gen_id }}__header">
-      {% if block.settings.subheading != blank %}
-        <div class="ai-dome-cards-{{ ai_gen_id }}__subheading">{{ block.settings.subheading | escape }}</div>
+      {% assign sub_title = block.settings.subheading %}
+      {% if sub_title == blank %}
+        {% assign sub_title = "Find Your Perfect Pick" %}
       {% endif %}
+      <div class="ai-dome-cards-{{ ai_gen_id }}__subheading">{{ sub_title | escape }}</div>
       
       {% if block.settings.heading != blank %}
         <h2 class="ai-dome-cards-{{ ai_gen_id }}__heading">
