@@ -1,6 +1,6 @@
 {% doc %}
   @prompt
-    Explore our collection section with subheading, black and gold heading, and fully clickable card image & title
+    Explore our collection section with black subheading, black and gold main heading, and fully clickable card image & title
 {% enddoc %}
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
@@ -8,13 +8,13 @@
   .ai-dome-cards-{{ ai_gen_id }} { display: block; width: 100%; max-width: 100%; padding: {{ block.settings.section_padding }}px 0; color: {{ block.settings.text_color }}; background-color: {{ block.settings.section_background }}; }
   .ai-dome-cards-{{ ai_gen_id }}__inner { width: {{ block.settings.desktop_width_percent }}%; max-width: 100%; margin: 0 auto; }
   .ai-dome-cards-{{ ai_gen_id }}__header { margin-bottom: 28px; text-align: {{ block.settings.heading_alignment }}; }
-  .ai-dome-cards-{{ ai_gen_id }}__subheading { font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.08em; color: #b88146; margin-bottom: 6px; text-transform: uppercase; }
+  .ai-dome-cards-{{ ai_gen_id }}__subheading { font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.08em; color: #000000 !important; margin-bottom: 6px; text-transform: uppercase; }
   .ai-dome-cards-{{ ai_gen_id }}__heading { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: {{ block.settings.heading_size }}px; line-height: 1.25; font-weight: 700; color: #000000; }
   .ai-dome-cards-{{ ai_gen_id }}__heading span.gold-text { color: #b88146; }
   .ai-dome-cards-{{ ai_gen_id }}__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: {{ block.settings.card_gap }}px; }
   .ai-dome-card-{{ ai_gen_id }} { min-width: 0; overflow: hidden; background: {{ block.settings.card_background }}; border-radius: {{ block.settings.top_radius }}px {{ block.settings.top_radius }}px 8px 8px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
   .ai-dome-card-{{ ai_gen_id }}:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.06); }
-  .ai-dome-card-{{ ai_gen_id }}__card-link { display: block; text-decoration: none; color: inherit; cursor: pointer; width: 100%; height: 100%; }
+  .ai-dome-card-{{ ai_gen_id }}__card-link { display: block; text-decoration: none; color: #000000 !important; cursor: pointer; width: 100%; height: 100%; }
   .ai-dome-card-{{ ai_gen_id }}__media { position: relative; width: 100%; aspect-ratio: 4 / 5; overflow: hidden; background: #f2f2f2; }
   .ai-dome-card-{{ ai_gen_id }}__media img, .ai-dome-card-{{ ai_gen_id }}__media svg { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
   .ai-dome-card-{{ ai_gen_id }}:hover .ai-dome-card-{{ ai_gen_id }}__media img { transform: scale(1.05); }
@@ -22,7 +22,7 @@
   .ai-dome-card-{{ ai_gen_id }}__content { padding: 16px 14px 18px; text-align: {{ block.settings.card_alignment }}; }
   .ai-dome-card-{{ ai_gen_id }}__title { margin: 0 0 6px; font-family: 'Outfit', sans-serif; font-size: {{ block.settings.card_title_size }}px; line-height: 1.25; color: #000000 !important; font-weight: 600; text-decoration: none; }
   .ai-dome-card-{{ ai_gen_id }}__text { margin: 0; font-size: 14px; line-height: 1.45; color: #44403c; }
-  .ai-dome-card-{{ ai_gen_id }}__link { display: inline-block; margin-top: 12px; color: #000000; font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  .ai-dome-card-{{ ai_gen_id }}__link { display: inline-block; margin-top: 12px; color: #000000 !important; font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
   @media screen and (max-width: 749px) {
     .ai-dome-cards-{{ ai_gen_id }}__inner { width: 100%; }
     .ai-dome-cards-{{ ai_gen_id }}__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
