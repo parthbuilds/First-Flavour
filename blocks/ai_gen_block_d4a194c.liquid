@@ -149,11 +149,13 @@
     <!-- Section Header -->
     <div class="ai-dome-cards-{{ ai_gen_id }}__header">
 
-      {% if block.settings.subheading != blank %}
-        <div class="ai-dome-cards-{{ ai_gen_id }}__subheading ai-dome-subheading">
-          {{ block.settings.subheading | escape }}
-        </div>
+      {% assign subheading_text = block.settings.subheading %}
+      {% if subheading_text == blank %}
+        {% assign subheading_text = "FIND YOUR PERFECT PICK" %}
       {% endif %}
+      <div class="ai-dome-cards-{{ ai_gen_id }}__subheading ai-dome-subheading">
+        {{ subheading_text | upcase | escape }}
+      </div>
 
       {% if block.settings.heading != blank %}
         <h2 class="ai-dome-cards-{{ ai_gen_id }}__heading ai-dome-heading">
@@ -179,7 +181,10 @@
           assign text = block.settings[text_key]
           assign link = block.settings[link_key]
 
-          assign card_url = link | default: '/collections/all'
+          assign card_url = link
+          if card_url == blank
+            assign card_url = '/collections/all'
+          endif
         %}
 
         <article class="ai-dome-card-{{ ai_gen_id }}">
