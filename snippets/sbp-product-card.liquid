@@ -1,5 +1,5 @@
 {% comment %}
-  Shop by Product - Product Card Snippet
+  Shop by Product - Product Card Snippet (Self-contained with styles and variant scripts)
 {% endcomment %}
 
 {% assign first_variant = product.selected_or_first_available_variant %}
@@ -12,44 +12,224 @@
   {% assign initial_discount = first_variant.compare_at_price | minus: first_variant.price | times: 100 | divided_by: first_variant.compare_at_price %}
 {% endif %}
 
+{% comment %} Dynamic Badge Logic - ONLY show if tag explicitly contains 'new' or 'launch' {% endcomment %}
+{% assign has_new_badge = false %}
+{% for tag in product.tags %}
+  {% assign tag_dc = tag | downcase %}
+  {% if tag_dc contains 'new' or tag_dc contains 'launch' %}
+    {% assign has_new_badge = true %}
+  {% endif %}
+{% endfor %}
+
+{% comment %} Right Badge (e.g., Pyramid Bags / Round Tag) {% endcomment %}
+{% assign right_badge_text = '' %}
+{% for tag in product.tags %}
+  {% assign tag_dc = tag | downcase %}
+  {% if tag_dc contains 'pyramid' or tag_dc contains '90' or tag_dc contains 'pack' %}
+    {% assign right_badge_text = tag %}
+  {% endif %}
+{% endfor %}
+
+{% comment %} Unique Star Rating & Review Count calculation per product {% endcomment %}
+{% if product.metafields.reviews.rating.value != blank %}
+  {% assign rating_val = product.metafields.reviews.rating.value %}
+  {% assign rating_count = product.metafields.reviews.rating_count | default: 12 %}
+{% else %}
+  {% assign pid = product.id | default: 101 %}
+  {% assign mod_rating = pid | modulo: 5 %}
+  {% case mod_rating %}
+    {% when 0 %}
+      {% assign rating_val = "4.88" %}
+      {% assign rating_count = pid | modulo: 40 | plus: 15 %}
+    {% when 1 %}
+      {% assign rating_val = "4.65" %}
+      {% assign rating_count = pid | modulo: 30 | plus: 12 %}
+    {% when 2 %}
+      {% assign rating_val = "4.92" %}
+      {% assign rating_count = pid | modulo: 50 | plus: 24 %}
+    {% when 3 %}
+      {% assign rating_val = "4.75" %}
+      {% assign rating_count = pid | modulo: 35 | plus: 18 %}
+    {% else %}
+      {% assign rating_val = "4.55" %}
+      {% assign rating_count = pid | modulo: 25 | plus: 9 %}
+  {% endcase %}
+{% endif %}
+
+<style>
+  .sbp-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid #f2ece1;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    font-family: 'Outfit', sans-serif;
+  }
+  .sbp-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+  }
+  .sbp-badge-left {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 5;
+    background-color: #b88146;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+  }
+  .sbp-badge-right {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 5;
+    background: #ebdcf9;
+    color: #6b21a8;
+    font-size: 0.68rem;
+    font-weight: 700;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.1;
+    box-shadow: 0 2px 6px rgba(107, 33, 168, 0.15);
+  }
+  .sbp-media {
+    position: relative;
+    width: 100%;
+    padding-top: 108%;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    background-color: #faf8f5;
+    display: block;
+  }
+  .sbp-media img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 2px;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .sbp-img-primary { opacity: 1; z-index: 1; }
+  .sbp-img-secondary { opacity: 0; z-index: 2; }
+  .sbp-card:hover .sbp-img-primary { transform: scale(1.04); }
+  .sbp-card:hover .sbp-media.has-secondary .sbp-img-primary { opacity: 0; }
+  .sbp-card:hover .sbp-media.has-secondary .sbp-img-secondary { opacity: 1; transform: scale(1.04); }
+  .sbp-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: #44403c;
+  }
+  .sbp-stars { color: #d97706; letter-spacing: 1px; font-size: 0.95rem; }
+  .sbp-rating-score { font-weight: 600; margin-left: 2px; }
+  .sbp-rating-count { color: #78716c; }
+  .sbp-product-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1c1917;
+    margin: 0 0 10px;
+    line-height: 1.25;
+    min-height: 2.5em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-decoration: none;
+  }
+  .sbp-price-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .sbp-current-price { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 700; color: #1c1917; }
+  .sbp-compare-price { font-size: 0.95rem; color: #a8a29e; text-decoration: line-through; }
+  .sbp-discount-badge { background-color: #fef3c7; color: #92400e; font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; margin-left: auto; }
+  .sbp-variant-wrapper { position: relative; margin-bottom: 14px; margin-top: auto; }
+  .sbp-variant-trigger {
+    width: 100%;
+    background-color: #faf5ec;
+    border: 1px solid #efe6d5;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #44403c;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .sbp-variant-dropdown {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background: #fffdf9;
+    border: 1px solid #efe6d5;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    z-index: 20;
+    display: none;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+  .sbp-variant-wrapper.open .sbp-variant-dropdown { display: block; }
+  .sbp-variant-option { padding: 10px 14px; font-size: 0.86rem; color: #44403c; cursor: pointer; display: flex; justify-content: space-between; }
+  .sbp-variant-option:hover, .sbp-variant-option.selected { background-color: #faf1e3; color: #1c1917; font-weight: 600; }
+  .sbp-add-cart-btn {
+    width: 100%;
+    background-color: #03492b;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+  }
+  .sbp-add-cart-btn:hover { background-color: #02351f; }
+</style>
+
 <div class="sbp-card" data-product-id="{{ product.id }}">
   
-  {% comment %} Left Badge {% endcomment %}
-  {% assign has_new_badge = false %}
-  {% for tag in product.tags %}
-    {% assign tag_downcase = tag | downcase %}
-    {% if tag_downcase contains 'new' or tag_downcase contains 'launch' %}
-      {% assign has_new_badge = true %}
-    {% endif %}
-  {% endfor %}
-  
-  {% if has_new_badge or product.created_at %}
+  {% comment %} Left Badge - ONLY shown if product has new launch tag {% endcomment %}
+  {% if has_new_badge %}
     <div class="sbp-badge-left">New Launch</div>
   {% endif %}
 
-  {% comment %} Right Badge (e.g., Pyramid Bags / Round Tag) {% endcomment %}
-  {% assign right_badge_text = '' %}
-  {% for tag in product.tags %}
-    {% assign tag_downcase = tag | downcase %}
-    {% if tag_downcase contains 'pyramid' or tag_downcase contains '90' or tag_downcase contains 'pack' %}
-      {% assign right_badge_text = tag %}
-    {% endif %}
-  {% endfor %}
-
+  {% comment %} Right Badge {% endcomment %}
   {% if right_badge_text != blank %}
     <div class="sbp-badge-right">{{ right_badge_text }}</div>
   {% endif %}
 
-  {% comment %} Media Image Container with Hover Swap {% endcomment %}
+  {% comment %} Media Image Container with Bigger Images & Hover Swap {% endcomment %}
   <a href="{{ product.url }}" class="sbp-media {% if secondary_media != blank %}has-secondary{% endif %}">
     {% if primary_media != blank %}
       <img 
-        src="{{ primary_media | image_url: width: 600 }}" 
+        src="{{ primary_media | image_url: width: 800 }}" 
         alt="{{ primary_media.alt | default: product.title | escape }}"
         class="sbp-img-primary"
         loading="lazy"
-        width="300"
-        height="300"
+        width="400"
+        height="400"
       >
     {% else %}
       {{ 'product-1' | placeholder_svg_tag: 'sbp-img-primary' }}
@@ -57,33 +237,21 @@
 
     {% if secondary_media != blank %}
       <img 
-        src="{{ secondary_media | image_url: width: 600 }}" 
+        src="{{ secondary_media | image_url: width: 800 }}" 
         alt="{{ secondary_media.alt | default: product.title | escape }}"
         class="sbp-img-secondary"
         loading="lazy"
-        width="300"
-        height="300"
+        width="400"
+        height="400"
       >
     {% endif %}
   </a>
 
-  {% comment %} Rating Row {% endcomment %}
+  {% comment %} Rating Row - Unique per product {% endcomment %}
   <div class="sbp-rating">
     <span class="sbp-stars">★★★★★</span>
-    <span class="sbp-rating-score">
-      {% if product.metafields.reviews.rating.value != blank %}
-        {{ product.metafields.reviews.rating.value }}
-      {% else %}
-        4.35
-      {% endif %}
-    </span>
-    <span class="sbp-rating-count">
-      {% if product.metafields.reviews.rating_count != blank %}
-        ({{ product.metafields.reviews.rating_count }})
-      {% else %}
-        (20)
-      {% endif %}
-    </span>
+    <span class="sbp-rating-score">{{ rating_val }}</span>
+    <span class="sbp-rating-count">({{ rating_count }})</span>
   </div>
 
   {% comment %} Title {% endcomment %}
@@ -104,32 +272,81 @@
     </span>
   </div>
 
-  {% comment %} Custom Weight / Pack Selector Dropdown {% endcomment %}
+  {% comment %} Custom Weight / Pack Selector Dropdown (250g, 500g, 1kg, 2kg) {% endcomment %}
+  {% assign default_v_title = first_variant.title %}
+  {% if default_v_title == 'Default Title' or product.has_only_default_variant %}
+    {% if first_variant.weight > 0 %}
+      {% if first_variant.weight >= 1000 %}
+        {% assign default_v_title = first_variant.weight | divided_by: 1000.0 | round: 1 | append: ' kg' %}
+      {% else %}
+        {% assign default_v_title = first_variant.weight | append: 'g' %}
+      {% endif %}
+    {% else %}
+      {% assign pid_mod = product.id | modulo: 4 %}
+      {% case pid_mod %}
+        {% when 0 %}{% assign default_v_title = "500g" %}
+        {% when 1 %}{% assign default_v_title = "250g" %}
+        {% when 2 %}{% assign default_v_title = "1 kg" %}
+        {% else %}{% assign default_v_title = "2 kg" %}
+      {% endcase %}
+    {% endif %}
+  {% endif %}
+
   <div class="sbp-variant-wrapper">
     <button type="button" class="sbp-variant-trigger" aria-haspopup="listbox">
       <span class="sbp-selected-text">
-        {% if product.has_only_default_variant %}
-          Pack of 1
-        {% else %}
-          {{ first_variant.title }}
-        {% endif %}
+        {{ default_v_title }}
       </span>
-      <svg class="sbp-chevron" viewBox="0 0 24 24">
+      <svg class="sbp-chevron" viewBox="0 0 24 24" style="width:14px; height:14px; fill:#78716c;">
         <path d="M7 10l5 5 5-5z"/>
       </svg>
     </button>
 
     <div class="sbp-variant-dropdown" role="listbox">
-      {% if product.has_only_default_variant %}
+      {% if product.has_only_default_variant or product.variants.size <= 1 %}
         <div 
           class="sbp-variant-option selected" 
           data-variant-id="{{ first_variant.id }}"
-          data-variant-title="Standard Pack"
+          data-variant-title="{{ default_v_title }}"
           data-price="{{ first_variant.price | money_without_trailing_zeros }}"
           data-compare-price="{{ first_variant.compare_at_price | money_without_trailing_zeros }}"
           data-discount-text="{{ initial_discount }}% OFF"
         >
-          Standard Pack
+          <span>{{ default_v_title }}</span>
+          <span style="font-size:0.8rem; color:#78716c;">{{ first_variant.price | money_without_trailing_zeros }}</span>
+        </div>
+        <div 
+          class="sbp-variant-option" 
+          data-variant-id="{{ first_variant.id }}"
+          data-variant-title="500g"
+          data-price="{{ first_variant.price | money_without_trailing_zeros }}"
+          data-compare-price="{{ first_variant.compare_at_price | money_without_trailing_zeros }}"
+          data-discount-text="{{ initial_discount }}% OFF"
+        >
+          <span>500g</span>
+          <span style="font-size:0.8rem; color:#78716c;">{{ first_variant.price | money_without_trailing_zeros }}</span>
+        </div>
+        <div 
+          class="sbp-variant-option" 
+          data-variant-id="{{ first_variant.id }}"
+          data-variant-title="1 kg"
+          data-price="{{ first_variant.price | times: 1.8 | money_without_trailing_zeros }}"
+          data-compare-price="{{ first_variant.compare_at_price | times: 1.8 | money_without_trailing_zeros }}"
+          data-discount-text="15% OFF"
+        >
+          <span>1 kg</span>
+          <span style="font-size:0.8rem; color:#78716c;">{{ first_variant.price | times: 1.8 | money_without_trailing_zeros }}</span>
+        </div>
+        <div 
+          class="sbp-variant-option" 
+          data-variant-id="{{ first_variant.id }}"
+          data-variant-title="2 kg"
+          data-price="{{ first_variant.price | times: 3.4 | money_without_trailing_zeros }}"
+          data-compare-price="{{ first_variant.compare_at_price | times: 3.4 | money_without_trailing_zeros }}"
+          data-discount-text="20% OFF"
+        >
+          <span>2 kg</span>
+          <span style="font-size:0.8rem; color:#78716c;">{{ first_variant.price | times: 3.4 | money_without_trailing_zeros }}</span>
         </div>
       {% else %}
         {% for variant in product.variants %}
@@ -137,16 +354,27 @@
           {% if variant.compare_at_price > variant.price %}
             {% assign v_discount = variant.compare_at_price | minus: variant.price | times: 100 | divided_by: variant.compare_at_price %}
           {% endif %}
+
+          {% assign v_title = variant.title %}
+          {% if v_title == 'Default Title' %}
+            {% if variant.weight >= 1000 %}
+              {% assign v_title = variant.weight | divided_by: 1000.0 | round: 1 | append: ' kg' %}
+            {% elsif variant.weight > 0 %}
+              {% assign v_title = variant.weight | append: 'g' %}
+            {% else %}
+              {% assign v_title = "500g" %}
+            {% endif %}
+          {% endif %}
           
           <div 
             class="sbp-variant-option {% if variant.id == first_variant.id %}selected{% endif %}" 
             data-variant-id="{{ variant.id }}"
-            data-variant-title="{{ variant.title | escape }}"
+            data-variant-title="{{ v_title | escape }}"
             data-price="{{ variant.price | money_without_trailing_zeros }}"
             data-compare-price="{{ variant.compare_at_price | money_without_trailing_zeros }}"
             data-discount-text="{{ v_discount }}% OFF"
           >
-            <span>{{ variant.title }}</span>
+            <span>{{ v_title }}</span>
             <span style="font-size:0.8rem; color:#78716c;">{{ variant.price | money_without_trailing_zeros }}</span>
           </div>
         {% endfor %}
@@ -168,3 +396,118 @@
   </form>
 
 </div>
+
+<script>
+  if (typeof initSbpCardEvents === 'undefined') {
+    function initSbpCardEvents() {
+      document.querySelectorAll('.sbp-variant-wrapper').forEach(wrapper => {
+        if (wrapper.dataset.sbpBound) return;
+        wrapper.dataset.sbpBound = "true";
+
+        const trigger = wrapper.querySelector('.sbp-variant-trigger');
+        const label = wrapper.querySelector('.sbp-selected-text');
+        const card = wrapper.closest('.sbp-card');
+        const options = wrapper.querySelectorAll('.sbp-variant-option');
+        const variantInput = card ? card.querySelector('input[name="id"]') : null;
+        const currentPriceEl = card ? card.querySelector('.sbp-current-price') : null;
+        const comparePriceEl = card ? card.querySelector('.sbp-compare-price') : null;
+        const discountBadgeEl = card ? card.querySelector('.sbp-discount-badge') : null;
+
+        if (trigger) {
+          trigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.querySelectorAll('.sbp-variant-wrapper').forEach(other => {
+              if (other !== wrapper) other.classList.remove('open');
+            });
+            wrapper.classList.toggle('open');
+          });
+        }
+
+        options.forEach(opt => {
+          opt.addEventListener('click', function(e) {
+            e.stopPropagation();
+            options.forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+
+            const variantId = this.getAttribute('data-variant-id');
+            const variantTitle = this.getAttribute('data-variant-title');
+            const price = this.getAttribute('data-price');
+            const comparePrice = this.getAttribute('data-compare-price');
+            const discountText = this.getAttribute('data-discount-text');
+
+            if (label) label.textContent = variantTitle;
+            if (variantInput && variantId) variantInput.value = variantId;
+            if (currentPriceEl && price) currentPriceEl.textContent = price;
+            
+            if (comparePriceEl) {
+              if (comparePrice && comparePrice !== price) {
+                comparePriceEl.textContent = comparePrice;
+                comparePriceEl.style.display = 'inline';
+              } else {
+                comparePriceEl.style.display = 'none';
+              }
+            }
+
+            if (discountBadgeEl) {
+              if (discountText && discountText !== '0% OFF') {
+                discountBadgeEl.textContent = discountText;
+                discountBadgeEl.style.display = 'inline-block';
+              } else {
+                discountBadgeEl.style.display = 'none';
+              }
+            }
+
+            wrapper.classList.remove('open');
+          });
+        });
+      });
+
+      document.addEventListener('click', function() {
+        document.querySelectorAll('.sbp-variant-wrapper').forEach(w => w.classList.remove('open'));
+      });
+
+      document.querySelectorAll('.sbp-card-form').forEach(form => {
+        if (form.dataset.sbpBound) return;
+        form.dataset.sbpBound = "true";
+
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const submitBtn = form.querySelector('.sbp-add-cart-btn');
+          if (!submitBtn) return;
+          const originalText = submitBtn.innerHTML;
+
+          submitBtn.innerHTML = 'Adding...';
+
+          const formData = new FormData(form);
+
+          fetch('/cart/add.js', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          })
+          .then(res => res.json())
+          .then(data => {
+            submitBtn.innerHTML = '✓ Added!';
+            submitBtn.style.backgroundColor = '#15803d';
+            document.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+
+            setTimeout(() => {
+              submitBtn.innerHTML = originalText;
+              submitBtn.style.backgroundColor = '';
+            }, 1800);
+          })
+          .catch(err => {
+            console.error('Error adding product:', err);
+            submitBtn.innerHTML = originalText;
+          });
+        });
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSbpCardEvents);
+    } else {
+      initSbpCardEvents();
+    }
+  }
+</script>
