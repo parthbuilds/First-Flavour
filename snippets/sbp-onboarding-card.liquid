@@ -1,0 +1,105 @@
+{% comment %}
+  Shop by Product - Onboarding Card Snippet (Fallback demo cards matching screenshot design)
+{% endcomment %}
+
+{% case index %}
+  {% when 1 %}
+    {% assign title = "KSM-66® Ashwagandha - For Stress Management" %}
+    {% assign price = "₹ 989" %}
+    {% assign compare_price = "₹ 1,099" %}
+    {% assign discount = "10% OFF" %}
+    {% assign rating = "4.48" %}
+    {% assign reviews = "27" %}
+    {% assign weight_opt = "Pack of 60 capsules" %}
+    {% assign left_badge = "New Launch" %}
+    {% assign right_badge = "" %}
+    {% assign img_url = "https://cdn.shopify.com/s/files/1/0000/0000/files/ashwagandha.png" %}
+  {% when 2 %}
+    {% assign title = "Berberine Capsules - For Metabolism and Heart Health" %}
+    {% assign price = "₹ 1,599" %}
+    {% assign compare_price = "₹ 1,799" %}
+    {% assign discount = "11% OFF" %}
+    {% assign rating = "4.35" %}
+    {% assign reviews = "20" %}
+    {% assign weight_opt = "Pack of 60 capsules" %}
+    {% assign left_badge = "New Launch" %}
+    {% assign right_badge = "" %}
+    {% assign img_url = "https://cdn.shopify.com/s/files/1/0000/0000/files/berberine.png" %}
+  {% when 3 %}
+    {% assign title = "Bloat Ease Herbal Infusion - For Healthy Digestion" %}
+    {% assign price = "₹ 1,199" %}
+    {% assign compare_price = "₹ 1,499" %}
+    {% assign discount = "20% OFF" %}
+    {% assign rating = "4.62" %}
+    {% assign reviews = "8" %}
+    {% assign weight_opt = "30 Day Kit" %}
+    {% assign left_badge = "New Launch" %}
+    {% assign right_badge = "90 PYRAMID BAGS" %}
+    {% assign img_url = "https://cdn.shopify.com/s/files/1/0000/0000/files/bloat-ease.png" %}
+  {% else %}
+    {% assign title = "Restful Sleep Herbal Infusion - For Calming Sleep" %}
+    {% assign price = "₹ 1,199" %}
+    {% assign compare_price = "₹ 1,499" %}
+    {% assign discount = "20% OFF" %}
+    {% assign rating = "4.73" %}
+    {% assign reviews = "11" %}
+    {% assign weight_opt = "90 Day Kit" %}
+    {% assign left_badge = "New Launch" %}
+    {% assign right_badge = "90 PYRAMID BAGS" %}
+    {% assign img_url = "https://cdn.shopify.com/s/files/1/0000/0000/files/sleep.png" %}
+{% endcase %}
+
+<div class="sbp-card">
+  
+  {% if left_badge != blank %}
+    <div class="sbp-badge-left">{{ left_badge }}</div>
+  {% endif %}
+
+  {% if right_badge != blank %}
+    <div class="sbp-badge-right">{{ right_badge }}</div>
+  {% endif %}
+
+  <div class="sbp-media">
+    {{ 'product-' | append: index | placeholder_svg_tag: 'sbp-img-primary' }}
+  </div>
+
+  <div class="sbp-rating">
+    <span class="sbp-stars">★★★★★</span>
+    <span class="sbp-rating-score">{{ rating }}</span>
+    <span class="sbp-rating-count">({{ reviews }})</span>
+  </div>
+
+  <a href="#" class="sbp-product-title" title="{{ title }}">
+    {{ title }}
+  </a>
+
+  <div class="sbp-price-row">
+    <span class="sbp-current-price">{{ price }}</span>
+    <span class="sbp-compare-price">{{ compare_price }}</span>
+    <span class="sbp-discount-badge">{{ discount }}</span>
+  </div>
+
+  <div class="sbp-variant-wrapper">
+    <button type="button" class="sbp-variant-trigger">
+      <span class="sbp-selected-text">{{ weight_opt }}</span>
+      <svg class="sbp-chevron" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+    </button>
+
+    <div class="sbp-variant-dropdown">
+      <div class="sbp-variant-option selected" data-price="{{ price }}" data-compare-price="{{ compare_price }}" data-discount-text="{{ discount }}">
+        <span>{{ weight_opt }}</span>
+        <span style="font-size:0.8rem; color:#78716c;">{{ price }}</span>
+      </div>
+      <div class="sbp-variant-option" data-price="₹ 2,199" data-compare-price="₹ 2,799" data-discount-text="21% OFF">
+        <span>Pack of 120 capsules</span>
+        <span style="font-size:0.8rem; color:#78716c;">₹ 2,199</span>
+      </div>
+    </div>
+  </div>
+
+  <form class="sbp-card-form" onsubmit="event.preventDefault(); alert('Item added to cart!');">
+    <button type="submit" class="sbp-add-cart-btn">
+      Add to Cart
+    </button>
+  </form>
+</div>

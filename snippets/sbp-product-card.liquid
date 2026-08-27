@@ -1,0 +1,170 @@
+{% comment %}
+  Shop by Product - Product Card Snippet
+{% endcomment %}
+
+{% assign first_variant = product.selected_or_first_available_variant %}
+{% assign primary_media = product.featured_media | default: product.media[0] %}
+{% assign secondary_media = product.media[1] %}
+
+{% comment %} Calculate initial discount {% endcomment %}
+{% assign initial_discount = 0 %}
+{% if first_variant.compare_at_price > first_variant.price %}
+  {% assign initial_discount = first_variant.compare_at_price | minus: first_variant.price | times: 100 | divided_by: first_variant.compare_at_price %}
+{% endif %}
+
+<div class="sbp-card" data-product-id="{{ product.id }}">
+  
+  {% comment %} Left Badge {% endcomment %}
+  {% assign has_new_badge = false %}
+  {% for tag in product.tags %}
+    {% assign tag_downcase = tag | downcase %}
+    {% if tag_downcase contains 'new' or tag_downcase contains 'launch' %}
+      {% assign has_new_badge = true %}
+    {% endif %}
+  {% endfor %}
+  
+  {% if has_new_badge or product.created_at %}
+    <div class="sbp-badge-left">New Launch</div>
+  {% endif %}
+
+  {% comment %} Right Badge (e.g., Pyramid Bags / Round Tag) {% endcomment %}
+  {% assign right_badge_text = '' %}
+  {% for tag in product.tags %}
+    {% assign tag_downcase = tag | downcase %}
+    {% if tag_downcase contains 'pyramid' or tag_downcase contains '90' or tag_downcase contains 'pack' %}
+      {% assign right_badge_text = tag %}
+    {% endif %}
+  {% endfor %}
+
+  {% if right_badge_text != blank %}
+    <div class="sbp-badge-right">{{ right_badge_text }}</div>
+  {% endif %}
+
+  {% comment %} Media Image Container with Hover Swap {% endcomment %}
+  <a href="{{ product.url }}" class="sbp-media {% if secondary_media != blank %}has-secondary{% endif %}">
+    {% if primary_media != blank %}
+      <img 
+        src="{{ primary_media | image_url: width: 600 }}" 
+        alt="{{ primary_media.alt | default: product.title | escape }}"
+        class="sbp-img-primary"
+        loading="lazy"
+        width="300"
+        height="300"
+      >
+    {% else %}
+      {{ 'product-1' | placeholder_svg_tag: 'sbp-img-primary' }}
+    {% endif %}
+
+    {% if secondary_media != blank %}
+      <img 
+        src="{{ secondary_media | image_url: width: 600 }}" 
+        alt="{{ secondary_media.alt | default: product.title | escape }}"
+        class="sbp-img-secondary"
+        loading="lazy"
+        width="300"
+        height="300"
+      >
+    {% endif %}
+  </a>
+
+  {% comment %} Rating Row {% endcomment %}
+  <div class="sbp-rating">
+    <span class="sbp-stars">★★★★★</span>
+    <span class="sbp-rating-score">
+      {% if product.metafields.reviews.rating.value != blank %}
+        {{ product.metafields.reviews.rating.value }}
+      {% else %}
+        4.35
+      {% endif %}
+    </span>
+    <span class="sbp-rating-count">
+      {% if product.metafields.reviews.rating_count != blank %}
+        ({{ product.metafields.reviews.rating_count }})
+      {% else %}
+        (20)
+      {% endif %}
+    </span>
+  </div>
+
+  {% comment %} Title {% endcomment %}
+  <a href="{{ product.url }}" class="sbp-product-title" title="{{ product.title | escape }}">
+    {{ product.title }}
+  </a>
+
+  {% comment %} Price & Discount Row {% endcomment %}
+  <div class="sbp-price-row">
+    <span class="sbp-current-price">{{ first_variant.price | money_without_trailing_zeros }}</span>
+    
+    <span class="sbp-compare-price" {% if first_variant.compare_at_price <= first_variant.price or first_variant.compare_at_price == blank %}style="display:none;"{% endif %}>
+      {{ first_variant.compare_at_price | money_without_trailing_zeros }}
+    </span>
+
+    <span class="sbp-discount-badge" {% if initial_discount <= 0 %}style="display:none;"{% endif %}>
+      {{ initial_discount }}% OFF
+    </span>
+  </div>
+
+  {% comment %} Custom Weight / Pack Selector Dropdown {% endcomment %}
+  <div class="sbp-variant-wrapper">
+    <button type="button" class="sbp-variant-trigger" aria-haspopup="listbox">
+      <span class="sbp-selected-text">
+        {% if product.has_only_default_variant %}
+          Pack of 1
+        {% else %}
+          {{ first_variant.title }}
+        {% endif %}
+      </span>
+      <svg class="sbp-chevron" viewBox="0 0 24 24">
+        <path d="M7 10l5 5 5-5z"/>
+      </svg>
+    </button>
+
+    <div class="sbp-variant-dropdown" role="listbox">
+      {% if product.has_only_default_variant %}
+        <div 
+          class="sbp-variant-option selected" 
+          data-variant-id="{{ first_variant.id }}"
+          data-variant-title="Standard Pack"
+          data-price="{{ first_variant.price | money_without_trailing_zeros }}"
+          data-compare-price="{{ first_variant.compare_at_price | money_without_trailing_zeros }}"
+          data-discount-text="{{ initial_discount }}% OFF"
+        >
+          Standard Pack
+        </div>
+      {% else %}
+        {% for variant in product.variants %}
+          {% assign v_discount = 0 %}
+          {% if variant.compare_at_price > variant.price %}
+            {% assign v_discount = variant.compare_at_price | minus: variant.price | times: 100 | divided_by: variant.compare_at_price %}
+          {% endif %}
+          
+          <div 
+            class="sbp-variant-option {% if variant.id == first_variant.id %}selected{% endif %}" 
+            data-variant-id="{{ variant.id }}"
+            data-variant-title="{{ variant.title | escape }}"
+            data-price="{{ variant.price | money_without_trailing_zeros }}"
+            data-compare-price="{{ variant.compare_at_price | money_without_trailing_zeros }}"
+            data-discount-text="{{ v_discount }}% OFF"
+          >
+            <span>{{ variant.title }}</span>
+            <span style="font-size:0.8rem; color:#78716c;">{{ variant.price | money_without_trailing_zeros }}</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  {% comment %} AJAX Form & Add to Cart Button {% endcomment %}
+  <form class="sbp-card-form">
+    <input type="hidden" name="id" value="{{ first_variant.id }}">
+    <input type="hidden" name="quantity" value="1">
+    <button type="submit" class="sbp-add-cart-btn" {% unless first_variant.available %}disabled style="opacity:0.6; cursor:not-allowed;"{% endunless %}>
+      {% if first_variant.available %}
+        Add to Cart
+      {% else %}
+        Sold Out
+      {% endif %}
+    </button>
+  </form>
+
+</div>

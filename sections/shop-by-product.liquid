@@ -1,0 +1,840 @@
+{% comment %}
+  Shop by Product - Custom Featured Collection Section with Tabs, Variant Dropdown & GSAP Stagger Animation
+{% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+
+<style>
+  .sbp-section {
+    padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.bg_color }};
+    font-family: 'Outfit', sans-serif;
+    color: #1c1917;
+  }
+
+  .sbp-container {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .sbp-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .sbp-eyebrow {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: #44403c;
+    margin-bottom: 6px;
+    text-transform: capitalize;
+  }
+
+  .sbp-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: {{ section.settings.heading_color }};
+    margin: 0 0 20px;
+    line-height: 1.15;
+  }
+
+  /* Category Filter Tabs */
+  .sbp-tabs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .sbp-tab-btn {
+    background: none;
+    border: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #78716c;
+    cursor: pointer;
+    padding: 6px 12px;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+
+  .sbp-tab-btn:hover {
+    color: {{ section.settings.heading_color }};
+  }
+
+  .sbp-tab-btn.active {
+    color: {{ section.settings.heading_color }};
+  }
+
+  .sbp-tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 2px;
+    background-color: {{ section.settings.heading_color }};
+    border-radius: 2px;
+  }
+
+  /* Grid Layout */
+  .sbp-grid-container {
+    margin-top: 36px;
+  }
+
+  .sbp-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 1024px) {
+    .sbp-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .sbp-title {
+      font-size: 2.2rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .sbp-grid {
+      grid-template-columns: repeat(1, 1fr);
+      gap: 20px;
+    }
+  }
+
+  .sbp-tab-content {
+    display: none;
+  }
+
+  .sbp-tab-content.active {
+    display: block;
+  }
+
+  /* Product Card */
+  .sbp-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid #f2ece1;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+  }
+
+  .sbp-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Badges */
+  .sbp-badge-left {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 5;
+    background-color: #b88146;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+    text-transform: capitalize;
+  }
+
+  .sbp-badge-right {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 5;
+    background: #ebdcf9;
+    color: #6b21a8;
+    font-size: 0.68rem;
+    font-weight: 700;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.1;
+    box-shadow: 0 2px 6px rgba(107, 33, 168, 0.15);
+  }
+
+  /* Media Container with Image Hover Swap */
+  .sbp-media {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* 1:1 Aspect ratio */
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    background-color: #faf8f5;
+  }
+
+  .sbp-media img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 12px;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .sbp-img-primary {
+    opacity: 1;
+    z-index: 1;
+  }
+
+  .sbp-img-secondary {
+    opacity: 0;
+    z-index: 2;
+  }
+
+  .sbp-card:hover .sbp-img-primary {
+    transform: scale(1.04);
+  }
+
+  .sbp-card:hover .sbp-media.has-secondary .sbp-img-primary {
+    opacity: 0;
+  }
+
+  .sbp-card:hover .sbp-media.has-secondary .sbp-img-secondary {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+
+  /* Card Content */
+  .sbp-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: #44403c;
+  }
+
+  .sbp-stars {
+    color: #d97706;
+    letter-spacing: 1px;
+    font-size: 0.95rem;
+  }
+
+  .sbp-rating-score {
+    font-weight: 600;
+    margin-left: 2px;
+  }
+
+  .sbp-rating-count {
+    color: #78716c;
+  }
+
+  .sbp-product-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1c1917;
+    margin: 0 0 10px;
+    line-height: 1.25;
+    min-height: 2.5em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-decoration: none;
+  }
+
+  .sbp-product-title:hover {
+    color: {{ section.settings.heading_color }};
+  }
+
+  /* Price Row */
+  .sbp-price-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .sbp-current-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #1c1917;
+  }
+
+  .sbp-compare-price {
+    font-size: 0.95rem;
+    color: #a8a29e;
+    text-decoration: line-through;
+  }
+
+  .sbp-discount-badge {
+    background-color: #fef3c7;
+    color: #92400e;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-left: auto;
+  }
+
+  /* Custom Weight / Pack Size Dropdown */
+  .sbp-variant-wrapper {
+    position: relative;
+    margin-bottom: 14px;
+    margin-top: auto;
+  }
+
+  .sbp-variant-trigger {
+    width: 100%;
+    background-color: #faf5ec;
+    border: 1px solid #efe6d5;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #44403c;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+
+  .sbp-variant-trigger:hover {
+    border-color: #d5c7af;
+    background-color: #f7efe1;
+  }
+
+  .sbp-chevron {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.25s ease;
+    fill: #78716c;
+  }
+
+  .sbp-variant-wrapper.open .sbp-chevron {
+    transform: rotate(180deg);
+  }
+
+  .sbp-variant-dropdown {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background: #fffdf9;
+    border: 1px solid #efe6d5;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    z-index: 20;
+    display: none;
+    overflow: hidden;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+
+  .sbp-variant-wrapper.open .sbp-variant-dropdown {
+    display: block;
+  }
+
+  .sbp-variant-option {
+    padding: 10px 14px;
+    font-size: 0.86rem;
+    color: #44403c;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sbp-variant-option:hover, .sbp-variant-option.selected {
+    background-color: #faf1e3;
+    color: #1c1917;
+    font-weight: 600;
+  }
+
+  /* Add to Cart Button */
+  .sbp-add-cart-btn {
+    width: 100%;
+    background-color: {{ section.settings.btn_bg_color }};
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .sbp-add-cart-btn:hover {
+    background-color: {{ section.settings.btn_hover_bg }};
+  }
+
+  .sbp-add-cart-btn:active {
+    transform: scale(0.98);
+  }
+
+  .sbp-add-cart-btn.adding {
+    opacity: 0.8;
+    cursor: wait;
+  }
+
+  /* Section Footer */
+  .sbp-footer {
+    text-align: center;
+    margin-top: 36px;
+  }
+
+  .sbp-view-all {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1c1917;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.2s ease;
+  }
+
+  .sbp-view-all:hover {
+    color: {{ section.settings.heading_color }};
+  }
+</style>
+
+<div class="sbp-section" id="shop-by-product-{{ section.id }}">
+  <div class="sbp-container">
+    
+    <!-- Section Header -->
+    <div class="sbp-header">
+      {% if section.settings.eyebrow != blank %}
+        <div class="sbp-eyebrow">{{ section.settings.eyebrow }}</div>
+      {% endif %}
+      
+      {% if section.settings.heading != blank %}
+        <h2 class="sbp-title">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      <!-- Collection Category Tabs -->
+      <div class="sbp-tabs">
+        {% assign tab1_collection = collections[section.settings.collection_1] %}
+        {% assign tab2_collection = collections[section.settings.collection_2] %}
+        {% assign tab3_collection = collections[section.settings.collection_3] %}
+
+        <button class="sbp-tab-btn active" data-tab="tab-1">
+          {{ section.settings.tab_1_title | default: tab1_collection.title | default: 'Newly Launched' }}
+        </button>
+
+        {% if section.settings.collection_2 != blank or section.settings.tab_2_title != blank %}
+          <button class="sbp-tab-btn" data-tab="tab-2">
+            {{ section.settings.tab_2_title | default: tab2_collection.title | default: 'Supplements' }}
+          </button>
+        {% endif %}
+
+        {% if section.settings.collection_3 != blank or section.settings.tab_3_title != blank %}
+          <button class="sbp-tab-btn" data-tab="tab-3">
+            {{ section.settings.tab_3_title | default: tab3_collection.title | default: 'Best Sellers' }}
+          </button>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Product Grid Container -->
+    <div class="sbp-grid-container">
+      
+      {% comment %} Tab 1 Grid {% endcomment %}
+      <div class="sbp-tab-content active" id="tab-1-{{ section.id }}" data-collection-url="{{ tab1_collection.url | default: '/collections/all' }}">
+        <div class="sbp-grid">
+          {% assign products_to_show = tab1_collection.products %}
+          {% if products_to_show.size > 0 %}
+            {% for product in products_to_show limit: section.settings.max_products %}
+              {% render 'sbp-product-card', product: product, section: section %}
+            {% endfor %}
+          {% else %}
+            {% for i in (1..4) %}
+              {% render 'sbp-onboarding-card', index: i, section: section %}
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+      {% comment %} Tab 2 Grid {% endcomment %}
+      {% if section.settings.collection_2 != blank or section.settings.tab_2_title != blank %}
+        <div class="sbp-tab-content" id="tab-2-{{ section.id }}" data-collection-url="{{ tab2_collection.url | default: '/collections/all' }}">
+          <div class="sbp-grid">
+            {% assign products_to_show = tab2_collection.products %}
+            {% if products_to_show.size > 0 %}
+              {% for product in products_to_show limit: section.settings.max_products %}
+                {% render 'sbp-product-card', product: product, section: section %}
+              {% endfor %}
+            {% else %}
+              {% for i in (1..4) %}
+                {% render 'sbp-onboarding-card', index: i, section: section %}
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% comment %} Tab 3 Grid {% endcomment %}
+      {% if section.settings.collection_3 != blank or section.settings.tab_3_title != blank %}
+        <div class="sbp-tab-content" id="tab-3-{{ section.id }}" data-collection-url="{{ tab3_collection.url | default: '/collections/all' }}">
+          <div class="sbp-grid">
+            {% assign products_to_show = tab3_collection.products %}
+            {% if products_to_show.size > 0 %}
+              {% for product in products_to_show limit: section.settings.max_products %}
+                {% render 'sbp-product-card', product: product, section: section %}
+              {% endfor %}
+            {% else %}
+              {% for i in (1..4) %}
+                {% render 'sbp-onboarding-card', index: i, section: section %}
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+
+    <!-- Section Footer Link -->
+    <div class="sbp-footer">
+      <a href="{{ tab1_collection.url | default: '/collections/all' }}" class="sbp-view-all" id="sbp-view-all-link">View All</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const sectionContainer = document.getElementById('shop-by-product-{{ section.id }}');
+    if (!sectionContainer) return;
+
+    // Tab Switching Logic
+    const tabBtns = sectionContainer.querySelectorAll('.sbp-tab-btn');
+    const tabContents = sectionContainer.querySelectorAll('.sbp-tab-content');
+    const viewAllLink = sectionContainer.querySelector('#sbp-view-all-link');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+
+        this.classList.add('active');
+        const targetTabId = this.getAttribute('data-tab') + '-{{ section.id }}';
+        const targetContent = sectionContainer.querySelector('#' + targetTabId);
+        
+        if (targetContent) {
+          targetContent.classList.add('active');
+          const newUrl = targetContent.getAttribute('data-collection-url');
+          if (viewAllLink && newUrl) {
+            viewAllLink.setAttribute('href', newUrl);
+          }
+
+          // Re-trigger GSAP animation on tab change
+          animateCards(targetContent.querySelectorAll('.sbp-card'));
+        }
+      });
+    });
+
+    // Custom Variant Selector Logic
+    sectionContainer.querySelectorAll('.sbp-variant-wrapper').forEach(wrapper => {
+      const trigger = wrapper.querySelector('.sbp-variant-trigger');
+      const label = wrapper.querySelector('.sbp-selected-text');
+      const card = wrapper.closest('.sbp-card');
+      const options = wrapper.querySelectorAll('.sbp-variant-option');
+      const variantInput = card.querySelector('input[name="id"]');
+      const currentPriceEl = card.querySelector('.sbp-current-price');
+      const comparePriceEl = card.querySelector('.sbp-compare-price');
+      const discountBadgeEl = card.querySelector('.sbp-discount-badge');
+
+      if (trigger) {
+        trigger.addEventListener('click', function(e) {
+          e.stopPropagation();
+          // Close other open dropdowns
+          sectionContainer.querySelectorAll('.sbp-variant-wrapper').forEach(other => {
+            if (other !== wrapper) other.classList.remove('open');
+          });
+          wrapper.classList.toggle('open');
+        });
+      }
+
+      options.forEach(opt => {
+        opt.addEventListener('click', function(e) {
+          e.stopPropagation();
+          options.forEach(o => o.classList.remove('selected'));
+          this.classList.add('selected');
+
+          const variantId = this.getAttribute('data-variant-id');
+          const variantTitle = this.getAttribute('data-variant-title');
+          const price = this.getAttribute('data-price');
+          const comparePrice = this.getAttribute('data-compare-price');
+          const discountText = this.getAttribute('data-discount-text');
+
+          if (label) label.textContent = variantTitle;
+          if (variantInput) variantInput.value = variantId;
+          if (currentPriceEl && price) currentPriceEl.textContent = price;
+          
+          if (comparePriceEl) {
+            if (comparePrice && comparePrice !== price) {
+              comparePriceEl.textContent = comparePrice;
+              comparePriceEl.style.display = 'inline';
+            } else {
+              comparePriceEl.style.display = 'none';
+            }
+          }
+
+          if (discountBadgeEl) {
+            if (discountText && discountText !== '0% OFF') {
+              discountBadgeEl.textContent = discountText;
+              discountBadgeEl.style.display = 'inline-block';
+            } else {
+              discountBadgeEl.style.display = 'none';
+            }
+          }
+
+          wrapper.classList.remove('open');
+        });
+      });
+    });
+
+    // Close dropdowns on click outside
+    document.addEventListener('click', function() {
+      sectionContainer.querySelectorAll('.sbp-variant-wrapper').forEach(w => w.classList.remove('open'));
+    });
+
+    // AJAX Add to Cart Logic
+    sectionContainer.querySelectorAll('.sbp-card-form').forEach(form => {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const submitBtn = form.querySelector('.sbp-add-cart-btn');
+        const originalText = submitBtn.innerHTML;
+
+        submitBtn.classList.add('adding');
+        submitBtn.innerHTML = 'Adding...';
+
+        const formData = new FormData(form);
+
+        fetch('/cart/add.js', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          submitBtn.innerHTML = '✓ Added!';
+          submitBtn.style.backgroundColor = '#15803d';
+
+          // Trigger Theme Cart Drawer Refresh if theme supports it
+          document.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+          document.dispatchEvent(new CustomEvent('product:added', { detail: { product: data } }));
+
+          setTimeout(() => {
+            submitBtn.classList.remove('adding');
+            submitBtn.innerHTML = originalText;
+            submitBtn.style.backgroundColor = '';
+          }, 1800);
+        })
+        .catch(error => {
+          console.error('Error adding product to cart:', error);
+          submitBtn.classList.remove('adding');
+          submitBtn.innerHTML = originalText;
+        });
+      });
+    });
+
+    // GSAP ScrollTrigger Stagger Entrance Animation
+    function animateCards(cards) {
+      if (typeof gsap !== 'undefined') {
+        gsap.fromTo(cards, 
+          { opacity: 0, y: 35 }, 
+          { 
+            opacity: 1, 
+            y: 0, 
+            duration: 0.55, 
+            stagger: 0.12, 
+            ease: 'power2.out',
+            overwrite: 'auto'
+          }
+        );
+      }
+    }
+
+    function initGsapAnimation() {
+      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+
+        ScrollTrigger.create({
+          trigger: sectionContainer,
+          start: 'top 82%',
+          onEnter: () => {
+            const activeCards = sectionContainer.querySelectorAll('.sbp-tab-content.active .sbp-card');
+            animateCards(activeCards);
+          },
+          once: true
+        });
+      } else {
+        // Retry if GSAP script is defer loading
+        setTimeout(initGsapAnimation, 150);
+      }
+    }
+
+    initGsapAnimation();
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Shop by Product",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Subheading",
+      "default": "Discover Your Favorite"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Main Heading",
+      "default": "Shop by Product"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading & Accent Color",
+      "default": "#b88146"
+    },
+    {
+      "type": "header",
+      "content": "Collection Tab 1"
+    },
+    {
+      "type": "text",
+      "id": "tab_1_title",
+      "label": "Tab 1 Title",
+      "default": "Newly Launched"
+    },
+    {
+      "type": "collection",
+      "id": "collection_1",
+      "label": "Tab 1 Collection"
+    },
+    {
+      "type": "header",
+      "content": "Collection Tab 2"
+    },
+    {
+      "type": "text",
+      "id": "tab_2_title",
+      "label": "Tab 2 Title",
+      "default": "Supplements"
+    },
+    {
+      "type": "collection",
+      "id": "collection_2",
+      "label": "Tab 2 Collection"
+    },
+    {
+      "type": "header",
+      "content": "Collection Tab 3"
+    },
+    {
+      "type": "text",
+      "id": "tab_3_title",
+      "label": "Tab 3 Title",
+      "default": "Best Sellers"
+    },
+    {
+      "type": "collection",
+      "id": "collection_3",
+      "label": "Tab 3 Collection"
+    },
+    {
+      "type": "header",
+      "content": "Layout & Styling"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Max Products per Tab",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Add to Cart Button Color",
+      "default": "#03492b"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg",
+      "label": "Add to Cart Hover Color",
+      "default": "#02351f"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop by Product"
+    }
+  ]
+}
+{% endschema %}
