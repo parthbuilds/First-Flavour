@@ -115,12 +115,12 @@
 <div class="ai-dome-cards-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
   <div class="ai-dome-cards-{{ ai_gen_id }}__inner">
     <div class="ai-dome-cards-{{ ai_gen_id }}__header">
-      <div class="ai-dome-cards-{{ ai_gen_id }}__subheading">
+      <div class="ai-dome-cards-{{ ai_gen_id }}__subheading ai-dome-subheading">
         {{ block.settings.subheading | default: "Find Your Perfect Pick" | escape }}
       </div>
       
       {% if block.settings.heading != blank %}
-        <h2 class="ai-dome-cards-{{ ai_gen_id }}__heading">
+        <h2 class="ai-dome-cards-{{ ai_gen_id }}__heading ai-dome-heading">
           {{ block.settings.heading | escape }}
         </h2>
       {% endif %}
@@ -156,7 +156,7 @@
             </div>
             <div class="ai-dome-card-{{ ai_gen_id }}__content">
               {% if title != blank %}
-                <h3 class="ai-dome-card-{{ ai_gen_id }}__title">{{ title | escape }}</h3>
+                <h3 class="ai-dome-card-{{ ai_gen_id }}__title ai-dome-card-title">{{ title | escape }}</h3>
               {% endif %}
               {% if text != blank %}
                 <p class="ai-dome-card-{{ ai_gen_id }}__text">{{ text | escape }}</p>
