@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "section_YUqCeK": {
@@ -69,7 +78,7 @@
         "text_LmEx9h": {
           "type": "text",
           "settings": {
-            "text": "<p>India\u2019s Everyday Chai, Made Extraordinary.</p>",
+            "text": "<p>India’s Everyday Chai, Made Extraordinary.</p>",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
@@ -153,8 +162,7 @@
             "card_4_image": "shopify://shop_images/dome1.png",
             "card_4_title": "Premium Coffee",
             "card_4_text": "",
-            "card_4_link": "shopify://products/instant-coffee",
-            "subheading": "Discover Your Favorite"
+            "card_4_link": "shopify://products/instant-coffee"
           },
           "blocks": {}
         }
@@ -554,11 +562,11 @@
             "eyebrow": "Why choose us",
             "heading": "Thoughtfully made for every pour",
             "feature_1": "Premium ingredients, carefully selected",
-            "icon_1": "\u2713",
+            "icon_1": "✓",
             "feature_2": "Crafted in small batches for freshness",
-            "icon_2": "\u2726",
+            "icon_2": "✦",
             "feature_3": "Delivered fresh to your door",
-            "icon_3": "\u2665",
+            "icon_3": "♥",
             "media_type": "video",
             "image": "shopify://shop_images/banner-mobile-View.png",
             "shopify_video": "shopify://files/videos/tea_video.mp4",
@@ -649,7 +657,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<h1><strong>Brewing Warmth for Your Everyday Moments</strong></h1><h3><strong>First Flavour, First Choice</strong></h3><p>We believe the day truly begins with the perfect cup. In Indian homes, tea and coffee are more than beverages\u2014they are comforting rituals that bring people together, spark conversations, and create moments of calm.</p><p>FIRST FLAVOUR was created to honor these everyday rituals with carefully crafted blends that feel like home. Our range brings together authentic taste, quality ingredients, and everyday comfort\u2014because premium quality should be enjoyed every day.</p><p>From the rich warmth of masala chai to refreshing iced tea and the bold aroma of instant coffee, our blends are made to suit every mood and moment.</p><p>We carefully source and prepare our products to deliver consistent taste, honest value, and wholesome goodness in every cup. Whether it\u2019s a quiet personal break, a morning pick-me-up, or a thoughtful gift for someone special, First Flavour is here to make everyday moments a little warmer.</p>",
+            "text": "<h1><strong>Brewing Warmth for Your Everyday Moments</strong></h1><h3><strong>First Flavour, First Choice</strong></h3><p>We believe the day truly begins with the perfect cup. In Indian homes, tea and coffee are more than beverages—they are comforting rituals that bring people together, spark conversations, and create moments of calm.</p><p>FIRST FLAVOUR was created to honor these everyday rituals with carefully crafted blends that feel like home. Our range brings together authentic taste, quality ingredients, and everyday comfort—because premium quality should be enjoyed every day.</p><p>From the rich warmth of masala chai to refreshing iced tea and the bold aroma of instant coffee, our blends are made to suit every mood and moment.</p><p>We carefully source and prepare our products to deliver consistent taste, honest value, and wholesome goodness in every cup. Whether it’s a quiet personal break, a morning pick-me-up, or a thoughtful gift for someone special, First Flavour is here to make everyday moments a little warmer.</p>",
             "width": "100%",
             "max_width": "none",
             "alignment": "left",
@@ -736,7 +744,7 @@
             "review_2_rating": 4,
             "review_3_image": "shopify://shop_images/review-3.webp",
             "review_3_heading": "Priya S.",
-            "review_3_description": "This blend tastes fresh and naturally bright, with a gentle citrus aroma that lifts every sip. The quality is noticeable in the whole leaves and smooth finish\u2014refreshing served hot or over ice.",
+            "review_3_description": "This blend tastes fresh and naturally bright, with a gentle citrus aroma that lifts every sip. The quality is noticeable in the whole leaves and smooth finish—refreshing served hot or over ice.",
             "review_3_rating": 5,
             "review_4_image": "shopify://shop_images/review-4.webp",
             "review_4_heading": "Lucas T.",
