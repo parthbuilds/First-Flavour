@@ -428,6 +428,18 @@
     margin-bottom: 24px;
   }
 
+  /* Remove number spin buttons */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield !important;
+    appearance: textfield !important;
+  }
+
   .cp-qty-and-cart-row {
     display: flex;
     gap: 12px;
@@ -440,6 +452,7 @@
     border-radius: 6px;
     background: #fafaf9;
     height: 48px;
+    padding: 0 4px;
   }
 
   .cp-qty-btn {
@@ -457,7 +470,7 @@
   }
 
   .cp-qty-input {
-    width: 40px;
+    width: 36px;
     border: none;
     background: none;
     text-align: center;
@@ -465,6 +478,15 @@
     font-size: 0.95rem;
     font-weight: 600;
     color: #1c1917;
+    outline: none;
+    -webkit-appearance: none !important;
+    -moz-appearance: textfield !important;
+    appearance: textfield !important;
+  }
+  .cp-qty-input::-webkit-outer-spin-button,
+  .cp-qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
   }
 
   .cp-add-cart-btn {
