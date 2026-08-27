@@ -1,0 +1,54 @@
+{% doc %}
+  @prompt
+    Add a background color picker setting to the existing Dome card grid section so the merchant can customize the section's background color. The setting should appear in the section's settings panel and apply the chosen color as the section background.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .dome-card-grid-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    background-color: {{ block.settings.background_color }};
+  }
+{% endstyle %}
+
+<div class="dome-card-grid-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {{ block.settings.content }}
+</div>
+
+{% schema %}
+{
+  "name": "Dome card grid",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "liquid",
+      "id": "content",
+      "label": "Content"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dome card grid"
+    }
+  ],
+  "tag": null,
+  "class": "dome-card-grid-block"
+}
+{% endschema %}

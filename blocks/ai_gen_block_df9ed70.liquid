@@ -1,0 +1,107 @@
+{% doc %}
+  @prompt
+    can you make a section which is liek a banner it should take the full width of the website also on the mobile view we need to add a single image and in mobiel view also the abnner is same pelase, the height of the banner is too big and we need to make sure the image the banner just banner is perfect fit in the width without cutting eplase hte banner height shouild be like teh iange eplase, dude the hieght should be sammler you fucking amde it bigger ?????
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-full-width-banner-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-full-width-banner-{{ ai_gen_id }}__link {
+    display: block;
+    width: 100%;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .ai-full-width-banner-{{ ai_gen_id }}__media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-height: {{ block.settings.banner_height }}px;
+    overflow: hidden;
+    background: {{ block.settings.placeholder_color }};
+  }
+
+  .ai-full-width-banner-{{ ai_gen_id }}__image {
+    display: block;
+    width: 100%;
+    max-height: {{ block.settings.banner_height }}px;
+    object-fit: contain;
+    object-position: center;
+  }
+
+  .ai-full-width-banner-{{ ai_gen_id }}__placeholder {
+    position: relative;
+    width: 100%;
+    color: {{ block.settings.placeholder_icon_color }};
+  }
+
+  .ai-full-width-banner-{{ ai_gen_id }}__placeholder svg {
+    display: block;
+    width: 100%;
+    max-height: {{ block.settings.banner_height }}px;
+  }
+
+  .ai-full-width-banner-{{ ai_gen_id }}__empty-state {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    width: calc(100% - 32px);
+    transform: translateX(-50%);
+    color: {{ block.settings.placeholder_text_color }};
+    font-size: 13px;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-full-width-banner-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-full-width-banner-{{ ai_gen_id }}__media,
+    .ai-full-width-banner-{{ ai_gen_id }}__image,
+    .ai-full-width-banner-{{ ai_gen_id }}__placeholder svg {
+      max-height: {{ block.settings.mobile_banner_height }}px;
+    }
+  }
+{% endstyle %}
+
+<full-width-banner-{{ ai_gen_id }} class="ai-full-width-banner-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.banner_link != blank %}<a class="ai-full-width-banner-{{ ai_gen_id }}__link" href="{{ block.settings.banner_link }}">{% endif %}
+  <div class="ai-full-width-banner-{{ ai_gen_id }}__media">
+    {% if block.settings.banner_image != blank %}
+      <img class="ai-full-width-banner-{{ ai_gen_id }}__image" src="{{ block.settings.banner_image | image_url: width: 2400 }}" alt="{{ block.settings.banner_image.alt | escape }}" loading="lazy" width="{{ block.settings.banner_image.width }}" height="{{ block.settings.banner_image.height }}">
+    {% else %}
+      <div class="ai-full-width-banner-{{ ai_gen_id }}__placeholder">
+        {{ 'image' | placeholder_svg_tag }}
+        <div class="ai-full-width-banner-{{ ai_gen_id }}__empty-state">Add a banner image in the theme editor</div>
+      </div>
+    {% endif %}
+  </div>
+  {% if block.settings.banner_link != blank %}</a>{% endif %}
+</full-width-banner-{{ ai_gen_id }}>
+
+{% schema %}
+{
+  "name": "Full-width banner",
+  "settings": [
+    {"type":"image_picker","id":"banner_image","label":"Banner image"},
+    {"type":"url","id":"banner_link","label":"Banner link"},
+    {"type":"range","id":"desktop_width_percent","label":"Desktop width","min":50,"max":100,"step":5,"unit":"%","default":100},
+    {"type":"range","id":"banner_height","label":"Desktop height","min":100,"max":600,"step":10,"unit":"px","default":240},
+    {"type":"range","id":"mobile_banner_height","label":"Mobile height","min":80,"max":400,"step":10,"unit":"px","default":160},
+    {"type":"color","id":"placeholder_color","label":"Placeholder background","default":"#f4f4f4"},
+    {"type":"color","id":"placeholder_icon_color","label":"Placeholder icon","default":"#333333"},
+    {"type":"color","id":"placeholder_text_color","label":"Placeholder text","default":"#333333"}
+  ],
+  "presets":[{"name":"Full-width banner"}],
+  "tag":null,
+  "class":"full-width-banner-block"
+}
+{% endschema %}

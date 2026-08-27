@@ -1,0 +1,122 @@
+{{ 'component-category-nav.css' | asset_url | stylesheet_tag }}
+
+<section class="category-nav-section">
+  <div class="category-nav-container">
+    <div class="category-nav-scroll">
+      
+      <a href="{{ section.settings.tea_link }}" class="category-nav-item">
+        <div class="category-icon-wrapper">
+          <svg class="category-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 8h1a3 3 0 0 1 0 6h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><path d="M6 2v3"/><path d="M10 2v3"/><path d="M14 2v3"/></svg>
+        </div>
+        <span class="category-nav-title">First Flavour Tea</span>
+      </a>
+
+      <a href="{{ section.settings.coffee_link }}" class="category-nav-item">
+        <div class="category-icon-wrapper">
+          <svg class="category-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-1"/><path d="M2 8h16v8a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><path d="M6 2l2 4"/><path d="M12 2l2 4"/></svg>
+        </div>
+        <span class="category-nav-title">Coffee Blend</span>
+      </a>
+
+      <a href="{{ section.settings.lemon_link }}" class="category-nav-item">
+        <div class="category-icon-wrapper">
+          <svg class="category-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><path d="M12 4v16"/><path d="M4 12h16"/><path d="M6.34 6.34l11.32 11.32"/></svg>
+        </div>
+        <span class="category-nav-title">Lemon Tea</span>
+      </a>
+
+      <a href="{{ section.settings.quick_link }}" class="category-nav-item">
+        <div class="category-icon-wrapper">
+          <svg class="category-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <span class="category-nav-title">Quick Buy</span>
+      </a>
+
+      <a href="{{ section.settings.member_link }}" class="category-nav-item">
+        <div class="category-icon-wrapper">
+          <svg class="category-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <span class="category-nav-title">Membership</span>
+      </a>
+
+      <a href="{{ section.settings.custom_link }}" class="category-nav-item">
+        <div class="category-icon-wrapper">
+          <svg class="category-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <span class="category-nav-title">Customize Blend</span>
+      </a>
+
+      <a href="{{ section.settings.nutrition_link }}" class="category-nav-item">
+        <div class="category-icon-wrapper">
+          <svg class="category-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <span class="category-nav-title">Nutrition Expert</span>
+      </a>
+
+      <a href="{{ section.settings.story_link }}" class="category-nav-item">
+        <div class="category-icon-wrapper">
+          <svg class="category-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <span class="category-nav-title">Our Story</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "First Flavour Nav Bar",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Navigation Links"
+    },
+    {
+      "type": "url",
+      "id": "tea_link",
+      "label": "First Flavour Tea Link"
+    },
+    {
+      "type": "url",
+      "id": "coffee_link",
+      "label": "Coffee Blend Link"
+    },
+    {
+      "type": "url",
+      "id": "lemon_link",
+      "label": "Lemon Tea Link"
+    },
+    {
+      "type": "url",
+      "id": "quick_link",
+      "label": "Quick Buy Link"
+    },
+    {
+      "type": "url",
+      "id": "member_link",
+      "label": "Membership Link"
+    },
+    {
+      "type": "url",
+      "id": "custom_link",
+      "label": "Customize Blend Link"
+    },
+    {
+      "type": "url",
+      "id": "nutrition_link",
+      "label": "Nutrition Expert Link"
+    },
+    {
+      "type": "url",
+      "id": "story_link",
+      "label": "Our Story Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "First Flavour Nav Bar"
+    }
+  ]
+}
+{% endschema %}

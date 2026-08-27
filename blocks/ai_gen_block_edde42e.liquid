@@ -1,0 +1,166 @@
+{% doc %}
+  @prompt
+    generate a section with 3 columns and a bottom full width section like the footer the left most column number 1 should have a logo and "First Flavour offers premium tea, instant coffee and instant lemon tea for every taste. From refreshing iced tea to rich chai and classic black tea, plus thoughtful tea gifts." this detail and the other two columns should have the links to pages like "<div class="css-ba8579"><p data-sd-event="" class="css-ytpz36">Useful Links</p><a href="/about-us" target="_blank"><p data-sd-event="" class="css-17hoj11">About Us</p></a><a href="/privacy-policy" target="_blank"><p data-sd-event="" class="css-17hoj11">Privacy Policy</p></a><a href="/return-policy" target="_blank"><p data-sd-event="" class="css-17hoj11">Return Policy</p></a><a href="/shipping-policy" target="_blank"><p data-sd-event="" class="css-17hoj11">Shipping Policy</p></a><a href="/terms-and-conditions" target="_blank"><p data-sd-event="" class="css-17hoj11">Terms &amp; Conditions</p></a></div>"
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-footer-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    background: {{ block.settings.background_color }};
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-footer-{{ ai_gen_id }}__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 56px 32px 24px;
+  }
+
+  .ai-footer-{{ ai_gen_id }}__columns {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 48px;
+    padding-bottom: 48px;
+  }
+
+  .ai-footer-{{ ai_gen_id }}__logo {
+    display: block;
+    width: auto;
+    max-width: 180px;
+    height: {{ block.settings.logo_height }}px;
+    object-fit: contain;
+    object-position: left center;
+    margin-bottom: 20px;
+  }
+
+  .ai-footer-{{ ai_gen_id }}__logo-placeholder {
+    width: 180px;
+    height: {{ block.settings.logo_height }}px;
+    margin-bottom: 20px;
+  }
+
+  .ai-footer-{{ ai_gen_id }}__logo-placeholder svg {
+    width: 100%;
+    height: 100%;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-footer-{{ ai_gen_id }}__description,
+  .ai-footer-{{ ai_gen_id }}__link,
+  .ai-footer-{{ ai_gen_id }}__bottom {
+    font-family: {{ settings.type_body_font.family }}, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .ai-footer-{{ ai_gen_id }}__description {
+    max-width: 390px;
+    margin: 0;
+  }
+
+  .ai-footer-{{ ai_gen_id }}__heading {
+    margin: 0 0 18px;
+    font-family: {{ settings.type_heading_font.family }}, sans-serif;
+    font-size: 18px;
+    line-height: 1.3;
+    font-weight: 700;
+  }
+
+  .ai-footer-{{ ai_gen_id }}__links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-footer-{{ ai_gen_id }}__link {
+    color: {{ block.settings.text_color }};
+    text-decoration: none;
+  }
+
+  .ai-footer-{{ ai_gen_id }}__link:hover,
+  .ai-footer-{{ ai_gen_id }}__link:focus-visible {
+    text-decoration: underline;
+  }
+
+  .ai-footer-{{ ai_gen_id }}__bottom {
+    border-top: 1px solid {{ block.settings.border_color }};
+    padding-top: 20px;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-footer-{{ ai_gen_id }}__inner { padding: 40px 20px 20px; }
+    .ai-footer-{{ ai_gen_id }}__columns { grid-template-columns: 1fr; gap: 34px; padding-bottom: 34px; }
+  }
+{% endstyle %}
+
+<footer class="ai-footer-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-footer-{{ ai_gen_id }}__inner">
+    <div class="ai-footer-{{ ai_gen_id }}__columns">
+      <div>
+        {% if block.settings.logo %}
+          <img class="ai-footer-{{ ai_gen_id }}__logo" src="{{ block.settings.logo | image_url: width: 400 }}" alt="{{ shop.name | escape }}" loading="lazy">
+        {% else %}
+          <div class="ai-footer-{{ ai_gen_id }}__logo-placeholder">{{ 'image' | placeholder_svg_tag }}</div>
+        {% endif %}
+        <p class="ai-footer-{{ ai_gen_id }}__description">{{ block.settings.description }}</p>
+      </div>
+
+      {% for column in (1..2) %}
+        {% liquid
+          assign heading_key = 'column_' | append: column | append: '_heading'
+          assign labels_key = 'column_' | append: column | append: '_labels'
+          assign urls_key = 'column_' | append: column | append: '_urls'
+          assign heading = block.settings[heading_key]
+          assign labels = block.settings[labels_key] | newline_to_br | split: '<br />'
+          assign urls = block.settings[urls_key] | newline_to_br | split: '<br />'
+        %}
+        <nav aria-label="{{ heading | escape }}">
+          <h2 class="ai-footer-{{ ai_gen_id }}__heading">{{ heading }}</h2>
+          <div class="ai-footer-{{ ai_gen_id }}__links">
+            {% for label in labels %}
+              {% assign link_index = forloop.index0 %}
+              {% assign link_url = urls[link_index] | strip %}
+              {% assign clean_label = label | strip %}
+              {% if clean_label != blank %}
+                <a class="ai-footer-{{ ai_gen_id }}__link" href="{{ link_url | escape }}">{{ clean_label | escape }}</a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </nav>
+      {% endfor %}
+    </div>
+    <div class="ai-footer-{{ ai_gen_id }}__bottom">{{ block.settings.bottom_text }}</div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer columns",
+  "settings": [
+    { "type": "header", "content": "Brand" },
+    { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "range", "id": "logo_height", "label": "Logo height", "min": 24, "max": 100, "step": 4, "unit": "px", "default": 56 },
+    { "type": "textarea", "id": "description", "label": "Description", "default": "First Flavour offers premium tea, instant coffee and instant lemon tea for every taste. From refreshing iced tea to rich chai and classic black tea, plus thoughtful tea gifts." },
+    { "type": "header", "content": "Link columns" },
+    { "type": "text", "id": "column_1_heading", "label": "First heading", "default": "Useful Links" },
+    { "type": "textarea", "id": "column_1_labels", "label": "First labels", "default": "About Us\nPrivacy Policy\nReturn Policy\nShipping Policy\nTerms & Conditions" },
+    { "type": "textarea", "id": "column_1_urls", "label": "First URLs", "default": "/about-us\n/policies/privacy-policy\n/policies/refund-policy\n/policies/shipping-policy\n/policies/terms-of-service" },
+    { "type": "text", "id": "column_2_heading", "label": "Second heading", "default": "Customer Care" },
+    { "type": "textarea", "id": "column_2_labels", "label": "Second labels", "default": "About Us\nPrivacy Policy\nReturn Policy\nShipping Policy\nTerms & Conditions" },
+    { "type": "textarea", "id": "column_2_urls", "label": "Second URLs", "default": "/about-us\n/policies/privacy-policy\n/policies/refund-policy\n/policies/shipping-policy\n/policies/terms-of-service" },
+    { "type": "header", "content": "Style" },
+    { "type": "range", "id": "desktop_width_percent", "label": "Desktop width", "min": 50, "max": 100, "step": 5, "unit": "%", "default": 100 },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#000000" },
+    { "type": "color", "id": "border_color", "label": "Divider", "default": "#DFDFDF" },
+    { "type": "text", "id": "bottom_text", "label": "Bottom text", "default": "© 2026 First Flavour. All rights reserved." }
+  ],
+  "presets": [{ "name": "Footer columns" }],
+  "tag": null,
+  "class": "footer-columns-block"
+}
+{% endschema %}
