@@ -1,35 +1,54 @@
 {% doc %}
   @prompt
-    can you help me make a section with 4 cards the cards should have the top left and right corner radius full and the bottom like 8 px make sure it looks like a dome please and then let me know the size of the images as well that goes in the dome, remove teh 4th card pelase just keep only three , lets make it four cards and make sure the height of the cards is not this big please
+    Explore our collection section with sub-heading, black and gold heading, and black collection card titles
 {% enddoc %}
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
-{% style %}
+<style>
   .ai-dome-cards-{{ ai_gen_id }} { display: block; width: 100%; max-width: 100%; padding: {{ block.settings.section_padding }}px 0; color: {{ block.settings.text_color }}; background-color: {{ block.settings.section_background }}; }
   .ai-dome-cards-{{ ai_gen_id }}__inner { width: {{ block.settings.desktop_width_percent }}%; max-width: 100%; margin: 0 auto; }
-  .ai-dome-cards-{{ ai_gen_id }}__heading { margin: 0 0 28px; text-align: {{ block.settings.heading_alignment }}; font-size: {{ block.settings.heading_size }}px; line-height: 2.15; }
+  .ai-dome-cards-{{ ai_gen_id }}__header { margin-bottom: 28px; text-align: {{ block.settings.heading_alignment }}; }
+  .ai-dome-cards-{{ ai_gen_id }}__subheading { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 500; letter-spacing: 0.05em; color: #000000; margin-bottom: 6px; text-transform: capitalize; }
+  .ai-dome-cards-{{ ai_gen_id }}__heading { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: {{ block.settings.heading_size }}px; line-height: 1.25; font-weight: 700; color: #000000; }
+  .ai-dome-cards-{{ ai_gen_id }}__heading span.gold-text { color: #b88146; }
   .ai-dome-cards-{{ ai_gen_id }}__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: {{ block.settings.card_gap }}px; }
-  .ai-dome-card-{{ ai_gen_id }} { min-width: 0; overflow: hidden; background: {{ block.settings.card_background }}; border-radius: {{ block.settings.top_radius }}px {{ block.settings.top_radius }}px 8px 8px; }
+  .ai-dome-card-{{ ai_gen_id }} { min-width: 0; overflow: hidden; background: {{ block.settings.card_background }}; border-radius: {{ block.settings.top_radius }}px {{ block.settings.top_radius }}px 8px 8px; transition: transform 0.3s ease; }
+  .ai-dome-card-{{ ai_gen_id }}:hover { transform: translateY(-4px); }
   .ai-dome-card-{{ ai_gen_id }}__media { position: relative; width: 100%; aspect-ratio: 4 / 5; overflow: hidden; background: #f2f2f2; }
   .ai-dome-card-{{ ai_gen_id }}__media img, .ai-dome-card-{{ ai_gen_id }}__media svg { display: block; width: 100%; height: 100%; object-fit: cover; }
   .ai-dome-card-{{ ai_gen_id }}__media svg { padding: 18%; color: #777777; }
   .ai-dome-card-{{ ai_gen_id }}__content { padding: 16px 14px 18px; text-align: {{ block.settings.card_alignment }}; }
-  .ai-dome-card-{{ ai_gen_id }}__title { margin: 0 0 6px; font-size: {{ block.settings.card_title_size }}px; line-height: 1.25; }
-  .ai-dome-card-{{ ai_gen_id }}__text { margin: 0; font-size: 14px; line-height: 1.45; }
-  .ai-dome-card-{{ ai_gen_id }}__link { display: inline-block; margin-top: 12px; color: {{ block.settings.text_color }}; font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  .ai-dome-card-{{ ai_gen_id }}__title { margin: 0 0 6px; font-family: 'Outfit', sans-serif; font-size: {{ block.settings.card_title_size }}px; line-height: 1.25; color: #000000 !important; font-weight: 600; text-decoration: none; }
+  .ai-dome-card-{{ ai_gen_id }}__title a { color: #000000 !important; text-decoration: none; }
+  .ai-dome-card-{{ ai_gen_id }}__text { margin: 0; font-size: 14px; line-height: 1.45; color: #44403c; }
+  .ai-dome-card-{{ ai_gen_id }}__link { display: inline-block; margin-top: 12px; color: #000000; font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
   @media screen and (max-width: 749px) {
     .ai-dome-cards-{{ ai_gen_id }}__inner { width: 100%; }
     .ai-dome-cards-{{ ai_gen_id }}__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
     .ai-dome-cards-{{ ai_gen_id }}__heading { font-size: {{ block.settings.heading_size | times: 0.75 }}px; }
     .ai-dome-card-{{ ai_gen_id }}__content { padding: 14px 12px 16px; }
   }
-{% endstyle %}
+</style>
 
 <div class="ai-dome-cards-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
   <div class="ai-dome-cards-{{ ai_gen_id }}__inner">
-    {% if block.settings.heading != blank %}
-      <h2 class="ai-dome-cards-{{ ai_gen_id }}__heading">{{ block.settings.heading | escape }}</h2>
-    {% endif %}
+    <div class="ai-dome-cards-{{ ai_gen_id }}__header">
+      {% if block.settings.subheading != blank %}
+        <div class="ai-dome-cards-{{ ai_gen_id }}__subheading">{{ block.settings.subheading | escape }}</div>
+      {% endif %}
+      
+      {% if block.settings.heading != blank %}
+        <h2 class="ai-dome-cards-{{ ai_gen_id }}__heading">
+          {% assign heading_words = block.settings.heading | split: ' ' %}
+          {% if heading_words.size >= 3 %}
+            {{ heading_words[0] }} {{ heading_words[1] }} <span class="gold-text">{% for i in (2..heading_words.size) %}{{ heading_words[i] }} {% endfor %}</span>
+          {% else %}
+            <span class="gold-text">{{ block.settings.heading | escape }}</span>
+          {% endif %}
+        </h2>
+      {% endif %}
+    </div>
+
     <div class="ai-dome-cards-{{ ai_gen_id }}__grid">
       {% for i in (1..4) %}
         {% liquid
@@ -43,6 +62,9 @@
           assign link = block.settings[link_key]
         %}
         <article class="ai-dome-card-{{ ai_gen_id }}">
+          {% if link != blank %}
+            <a href="{{ link }}" style="text-decoration:none; color:inherit; display:block;">
+          {% endif %}
           <div class="ai-dome-card-{{ ai_gen_id }}__media">
             {% if image != blank -%}
               <img
@@ -63,12 +85,15 @@
             {% if text != blank %}
               <p class="ai-dome-card-{{ ai_gen_id }}__text">{{ text | escape }}</p>
             {% endif %}
-            {% if link != blank -%}
-              <a class="ai-dome-card-{{ ai_gen_id }}__link" href="{{ link }}">
+            {% if link != blank and block.settings.link_label != blank -%}
+              <span class="ai-dome-card-{{ ai_gen_id }}__link">
                 {{- block.settings.link_label | escape -}}
-              </a>
+              </span>
             {%- endif %}
           </div>
+          {% if link != blank %}
+            </a>
+          {% endif %}
         </article>
       {% endfor %}
     </div>
@@ -81,6 +106,7 @@
   "tag": null,
   "class": "dome-card-grid-block",
   "settings": [
+    { "type": "text", "id": "subheading", "label": "Subheading / Eyebrow", "default": "Find Your Perfect Pick" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "Explore our collection" },
     {
       "type": "select",
@@ -92,7 +118,7 @@
       ],
       "default": "center"
     },
-    { "type": "text", "id": "link_label", "label": "Link label", "default": "Discover more" },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "" },
     {
       "type": "range",
       "id": "desktop_width_percent",
@@ -101,7 +127,7 @@
       "max": 100,
       "step": 5,
       "unit": "%",
-      "default": 100
+      "default": 90
     },
     {
       "type": "range",
@@ -141,7 +167,7 @@
       "max": 40,
       "step": 4,
       "unit": "px",
-      "default": 20
+      "default": 24
     },
     {
       "type": "range",
@@ -163,32 +189,28 @@
       ],
       "default": "center"
     },
-    { "type": "color", "id": "card_background", "label": "Card background", "default": "#F5F1EA" },
+    { "type": "color", "id": "card_background", "label": "Card background", "default": "rgba(0,0,0,0)" },
     { "type": "color", "id": "section_background", "label": "Section background", "default": "#FBF5EA" },
     { "type": "color", "id": "text_color", "label": "Text color", "default": "#000000" },
-    {
-      "type": "paragraph",
-      "content": "Recommended image size: 1200 × 900 px, using a 4:3 landscape ratio for the shorter dome cards."
-    },
     { "type": "header", "content": "Card 1" },
     { "type": "image_picker", "id": "card_1_image", "label": "Image" },
-    { "type": "text", "id": "card_1_title", "label": "Title", "default": "Card one" },
-    { "type": "textarea", "id": "card_1_text", "label": "Description", "default": "Add a short description." },
+    { "type": "text", "id": "card_1_title", "label": "Title", "default": "Lemon tea" },
+    { "type": "textarea", "id": "card_1_text", "label": "Description", "default": "" },
     { "type": "url", "id": "card_1_link", "label": "Link" },
     { "type": "header", "content": "Card 2" },
     { "type": "image_picker", "id": "card_2_image", "label": "Image" },
-    { "type": "text", "id": "card_2_title", "label": "Title", "default": "Card two" },
-    { "type": "textarea", "id": "card_2_text", "label": "Description", "default": "Add a short description." },
+    { "type": "text", "id": "card_2_title", "label": "Title", "default": "Herbal Tea" },
+    { "type": "textarea", "id": "card_2_text", "label": "Description", "default": "" },
     { "type": "url", "id": "card_2_link", "label": "Link" },
     { "type": "header", "content": "Card 3" },
     { "type": "image_picker", "id": "card_3_image", "label": "Image" },
-    { "type": "text", "id": "card_3_title", "label": "Title", "default": "Card three" },
-    { "type": "textarea", "id": "card_3_text", "label": "Description", "default": "Add a short description." },
+    { "type": "text", "id": "card_3_title", "label": "Title", "default": "Green Tea" },
+    { "type": "textarea", "id": "card_3_text", "label": "Description", "default": "" },
     { "type": "url", "id": "card_3_link", "label": "Link" },
     { "type": "header", "content": "Card 4" },
     { "type": "image_picker", "id": "card_4_image", "label": "Image" },
-    { "type": "text", "id": "card_4_title", "label": "Title", "default": "Card four" },
-    { "type": "textarea", "id": "card_4_text", "label": "Description", "default": "Add a short description." },
+    { "type": "text", "id": "card_4_title", "label": "Title", "default": "Premium Coffee" },
+    { "type": "textarea", "id": "card_4_text", "label": "Description", "default": "" },
     { "type": "url", "id": "card_4_link", "label": "Link" }
   ],
   "presets": [{ "name": "Dome card grid" }]
