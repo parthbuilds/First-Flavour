@@ -1,32 +1,36 @@
 {% comment %}
-  Custom Product Details Template - Inspired by Vahdam/Shopify design with Pick Your Size variant cards & dynamic gallery/price updates
+  Custom Product Details Template - Dynamic Sizes, Combos & JSON Configurable Settings
 {% endcomment %}
 
 {% assign current_variant = product.selected_or_first_available_variant %}
 {% assign featured_media = current_variant.featured_media | default: product.featured_media | default: product.media[0] %}
 
-{% comment %} Calculate discount {% endcomment %}
+{% comment %} Calculate initial discount {% endcomment %}
 {% assign initial_discount = 0 %}
 {% if current_variant.compare_at_price > current_variant.price %}
   {% assign initial_discount = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price %}
 {% endif %}
 
 {% comment %} Left & Right Badges {% endcomment %}
-{% assign has_new_badge = false %}
-{% for tag in product.tags %}
-  {% assign tag_dc = tag | downcase %}
-  {% if tag_dc contains 'new' or tag_dc contains 'launch' %}
-    {% assign has_new_badge = true %}
-  {% endif %}
-{% endfor %}
+{% assign left_badge_val = section.settings.left_badge_text %}
+{% if left_badge_val == blank %}
+  {% for tag in product.tags %}
+    {% assign tag_dc = tag | downcase %}
+    {% if tag_dc contains 'new' or tag_dc contains 'launch' %}
+      {% assign left_badge_val = tag %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
 
-{% assign right_badge_text = '' %}
-{% for tag in product.tags %}
-  {% assign tag_dc = tag | downcase %}
-  {% if tag_dc contains 'pyramid' or tag_dc contains '90' or tag_dc contains 'pack' %}
-    {% assign right_badge_text = tag %}
-  {% endif %}
-{% endfor %}
+{% assign right_badge_val = section.settings.right_badge_text %}
+{% if right_badge_val == blank %}
+  {% for tag in product.tags %}
+    {% assign tag_dc = tag | downcase %}
+    {% if tag_dc contains 'pyramid' or tag_dc contains '90' or tag_dc contains 'pack' %}
+      {% assign right_badge_val = tag %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
 
 {% comment %} Unique Star Rating & Count {% endcomment %}
 {% if product.metafields.reviews.rating.value != blank %}
@@ -130,7 +134,7 @@
     height: 100%;
     object-fit: contain;
     padding: 12px;
-    box-sizing: border-radius;
+    box-sizing: border-box;
     transition: opacity 0.3s ease;
   }
 
@@ -281,7 +285,7 @@
     gap: 6px;
   }
 
-  /* Pick Your Size - Variant Cards */
+  /* Pick Your Size & Combos - Variant Cards */
   .cp-variant-section {
     margin-bottom: 28px;
   }
@@ -294,7 +298,7 @@
 
   .cp-variant-title {
     font-family: 'Outfit', sans-serif;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: #1c1917;
     margin-bottom: 2px;
@@ -307,14 +311,8 @@
 
   .cp-variant-cards-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 12px;
-  }
-
-  @media (max-width: 600px) {
-    .cp-variant-cards-grid {
-      grid-template-columns: 1fr;
-    }
   }
 
   .cp-vcard {
@@ -322,7 +320,7 @@
     background: #ffffff;
     border: 2px solid #efe6d5;
     border-radius: 12px;
-    padding: 16px 12px;
+    padding: 18px 10px 14px;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -338,7 +336,7 @@
   .cp-vcard.selected {
     border-color: #b88146;
     background-color: #fffdf9;
-    box-shadow: 0 4px 12px rgba(184, 129, 70, 0.12);
+    box-shadow: 0 4px 14px rgba(184, 129, 70, 0.14);
   }
 
   .cp-vcard-top-tag {
@@ -355,11 +353,12 @@
     letter-spacing: 0.04em;
     text-transform: uppercase;
     white-space: nowrap;
+    z-index: 2;
   }
 
   .cp-vcard-img {
-    width: 60px;
-    height: 60px;
+    width: 58px;
+    height: 58px;
     object-fit: contain;
     margin-bottom: 8px;
   }
@@ -367,11 +366,13 @@
   .cp-vcard-name-row {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 4px;
-    font-size: 0.88rem;
+    font-size: 0.86rem;
     font-weight: 600;
     color: #1c1917;
     margin-bottom: 4px;
+    line-height: 1.2;
   }
 
   .cp-vcard-check {
@@ -379,6 +380,7 @@
     height: 14px;
     fill: #10b981;
     display: none;
+    flex-shrink: 0;
   }
 
   .cp-vcard.selected .cp-vcard-check {
@@ -388,12 +390,13 @@
   .cp-vcard-size-tag {
     background: #f3f4f6;
     color: #4b5563;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 700;
     padding: 2px 8px;
     border-radius: 12px;
     margin-bottom: 8px;
     text-transform: uppercase;
+    letter-spacing: 0.02em;
   }
 
   .cp-vcard-prices {
@@ -417,7 +420,7 @@
     color: #1c1917;
   }
 
-  /* Quantity & Action Buttons */
+  /* Action Buttons */
   .cp-actions-form {
     display: flex;
     flex-direction: column;
@@ -532,12 +535,12 @@
     
     <!-- Left Column: Gallery & Badges -->
     <div class="cp-gallery-wrapper">
-      {% if has_new_badge %}
-        <div class="cp-badge-left">New Launch</div>
+      {% if left_badge_val != blank %}
+        <div class="cp-badge-left">{{ left_badge_val }}</div>
       {% endif %}
 
-      {% if right_badge_text != blank %}
-        <div class="cp-badge-right">{{ right_badge_text }}</div>
+      {% if right_badge_val != blank %}
+        <div class="cp-badge-right">{{ right_badge_val }}</div>
       {% else %}
         <div class="cp-badge-right">90<br>PYRAMID<br>BAGS</div>
       {% endif %}
@@ -548,7 +551,7 @@
           src="{{ featured_media | image_url: width: 1000 }}" 
           alt="{{ featured_media.alt | default: product.title | escape }}"
         >
-        <button type="button" class="cp-zoom-trigger" aria-label="Zoom Image" onclick="alert('Zoom view');">
+        <button type="button" class="cp-zoom-trigger" aria-label="Zoom Image">
           🔍
         </button>
       </div>
@@ -605,20 +608,62 @@
 
         <div class="cp-feature-pill">
           <span>🌱</span>
-          <span>Plant Based Plastic Free</span>
+          <span>{{ section.settings.feature_pill_text | default: "Plant Based Plastic Free" }}</span>
         </div>
       </div>
 
-      <!-- Pick Your Size - Variant Cards -->
+      <!-- Pick Your Size & Combos - Variant Cards -->
       <div class="cp-variant-section">
         <div class="cp-variant-header">
-          <div class="cp-variant-title">Pick Your Size</div>
-          <div class="cp-variant-subtitle">Select your favorite variant for your wellness goal.</div>
+          <div class="cp-variant-title">{{ section.settings.variant_heading | default: "Pick Your Size & Combo" }}</div>
+          <div class="cp-variant-subtitle">{{ section.settings.variant_subheading | default: "Select your favorite variant or combo pack for your wellness goal." }}</div>
         </div>
 
         <div class="cp-variant-cards-grid">
-          {% if product.has_only_default_variant or product.variants.size <= 1 %}
-            <!-- Fallback 3 Variant Cards matching reference screenshot -->
+          {% if section.blocks.size > 0 %}
+            
+            <!-- Custom JSON Configured Cards -->
+            {% for block in section.blocks %}
+              <div 
+                class="cp-vcard {% if forloop.first %}selected{% endif %}" 
+                data-variant-id="{{ block.settings.variant_id | default: current_variant.id }}"
+                data-price="{{ block.settings.price | default: current_variant.price | money_without_trailing_zeros }}"
+                data-compare="{{ block.settings.compare_price | default: current_variant.compare_at_price | money_without_trailing_zeros }}"
+                data-discount="{{ block.settings.discount | default: initial_discount | append: '% OFF' }}"
+                data-img="{% if block.settings.card_image != blank %}{{ block.settings.card_image | image_url: width: 1000 }}{% else %}{{ featured_media | image_url: width: 1000 }}{% endif %}"
+                {{ block.shopify_attributes }}
+              >
+                {% if block.settings.top_tag != blank %}
+                  <div class="cp-vcard-top-tag">{{ block.settings.top_tag }}</div>
+                {% endif %}
+
+                {% if block.settings.card_image != blank %}
+                  <img src="{{ block.settings.card_image | image_url: width: 200 }}" class="cp-vcard-img" alt="{{ block.settings.title }}">
+                {% else %}
+                  <img src="{{ featured_media | image_url: width: 200 }}" class="cp-vcard-img" alt="{{ block.settings.title }}">
+                {% endif %}
+
+                <div class="cp-vcard-name-row">
+                  <span>{{ block.settings.title }}</span>
+                  <svg class="cp-vcard-check" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
+                </div>
+
+                {% if block.settings.size_tag != blank %}
+                  <div class="cp-vcard-size-tag">{{ block.settings.size_tag }}</div>
+                {% endif %}
+
+                <div class="cp-vcard-prices">
+                  {% if block.settings.compare_price != blank %}
+                    <span class="cp-vcard-compare">{{ block.settings.compare_price }}</span>
+                  {% endif %}
+                  <span class="cp-vcard-price">{{ block.settings.price }}</span>
+                </div>
+              </div>
+            {% endfor %}
+
+          {% elsif product.has_only_default_variant or product.variants.size <= 1 %}
+            
+            <!-- Default Demo Cards (Transformation, Progress, Starter Pack) -->
             <div 
               class="cp-vcard selected" 
               data-variant-id="{{ current_variant.id }}"
@@ -628,12 +673,12 @@
               data-img="{{ featured_media | image_url: width: 1000 }}"
             >
               <div class="cp-vcard-top-tag">BEST VALUE</div>
-              <img src="{{ featured_media | image_url: width: 200 }}" class="cp-vcard-img" alt="Transformation">
+              <img src="{{ featured_media | image_url: width: 200 }}" class="cp-vcard-img" alt="Transformation Pack">
               <div class="cp-vcard-name-row">
                 <span>Transformation</span>
                 <svg class="cp-vcard-check" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
               </div>
-              <div class="cp-vcard-size-tag">30 DAY KIT</div>
+              <div class="cp-vcard-size-tag">30 DAY KIT / 1 KG</div>
               <div class="cp-vcard-prices">
                 <span class="cp-vcard-compare">{{ current_variant.compare_at_price | money_without_trailing_zeros }}</span>
                 <span class="cp-vcard-price">{{ current_variant.price | money_without_trailing_zeros }}</span>
@@ -648,12 +693,12 @@
               data-discount="15% OFF"
               data-img="{{ featured_media | image_url: width: 1000 }}"
             >
-              <img src="{{ featured_media | image_url: width: 200 }}" class="cp-vcard-img" alt="Progress">
+              <img src="{{ featured_media | image_url: width: 200 }}" class="cp-vcard-img" alt="Progress Pack">
               <div class="cp-vcard-name-row">
                 <span>Progress</span>
                 <svg class="cp-vcard-check" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
               </div>
-              <div class="cp-vcard-size-tag">20 DAY KIT</div>
+              <div class="cp-vcard-size-tag">20 DAY KIT / 500G</div>
               <div class="cp-vcard-prices">
                 <span class="cp-vcard-compare">₹999</span>
                 <span class="cp-vcard-price">₹849</span>
@@ -673,7 +718,7 @@
                 <span>Starter Pack</span>
                 <svg class="cp-vcard-check" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
               </div>
-              <div class="cp-vcard-size-tag">10 DAY KIT</div>
+              <div class="cp-vcard-size-tag">10 DAY KIT / 250G</div>
               <div class="cp-vcard-prices">
                 <span class="cp-vcard-compare">₹499</span>
                 <span class="cp-vcard-price">₹449</span>
@@ -682,16 +727,29 @@
 
           {% else %}
 
-            <!-- Dynamic Variant Cards Loop for multi-variant products -->
+            <!-- Dynamic Multi-Variant Loop Parsing Sizes & Combos -->
             {% for variant in product.variants %}
               {% assign v_discount = 0 %}
               {% if variant.compare_at_price > variant.price %}
                 {% assign v_discount = variant.compare_at_price | minus: variant.price | times: 100 | divided_by: variant.compare_at_price %}
               {% endif %}
               {% assign v_img = variant.featured_media | default: featured_media %}
+              
+              {% comment %} Parse Size & Combo Tag {% endcomment %}
+              {% assign v_title_dc = variant.title | downcase %}
+              {% assign size_tag_str = '' %}
+              {% if v_title_dc contains 'combo' or v_title_dc contains 'pack' or v_title_dc contains 'pair' or v_title_dc contains 'set' %}
+                {% assign size_tag_str = 'COMBO PACK' %}
+              {% elsif variant.weight >= 1000 %}
+                {% assign size_tag_str = variant.weight | divided_by: 1000.0 | round: 1 | append: ' KG' %}
+              {% elsif variant.weight > 0 %}
+                {% assign size_tag_str = variant.weight | append: 'G' %}
+              {% else %}
+                {% assign size_tag_str = variant.title | upcase %}
+              {% endif %}
 
               <div 
-                class="cp-vcard {% if variant.id == current_variant.id %}selected{% endif %}" 
+                class="cp-vcard {% if variant.id == current_variant.id or forloop.first %}selected{% endif %}" 
                 data-variant-id="{{ variant.id }}"
                 data-price="{{ variant.price | money_without_trailing_zeros }}"
                 data-compare="{{ variant.compare_at_price | money_without_trailing_zeros }}"
@@ -700,21 +758,18 @@
               >
                 {% if forloop.first %}
                   <div class="cp-vcard-top-tag">BEST VALUE</div>
+                {% elsif v_discount >= 20 %}
+                  <div class="cp-vcard-top-tag">SAVE {{ v_discount }}%</div>
                 {% endif %}
+
                 <img src="{{ v_img | image_url: width: 200 }}" class="cp-vcard-img" alt="{{ variant.title }}">
                 <div class="cp-vcard-name-row">
                   <span>{{ variant.title }}</span>
                   <svg class="cp-vcard-check" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z"/></svg>
                 </div>
-                <div class="cp-vcard-size-tag">
-                  {% if variant.weight >= 1000 %}
-                    {{ variant.weight | divided_by: 1000.0 | round: 1 }} KG
-                  {% elsif variant.weight > 0 %}
-                    {{ variant.weight }}G
-                  {% else %}
-                    PACK {{ forloop.index }}
-                  {% endif %}
-                </div>
+
+                <div class="cp-vcard-size-tag">{{ size_tag_str }}</div>
+
                 <div class="cp-vcard-prices">
                   <span class="cp-vcard-compare" {% if variant.compare_at_price <= variant.price or variant.compare_at_price == blank %}style="display:none;"{% endif %}>{{ variant.compare_at_price | money_without_trailing_zeros }}</span>
                   <span class="cp-vcard-price">{{ variant.price | money_without_trailing_zeros }}</span>
@@ -751,10 +806,10 @@
       <div class="cp-trust-box">
         <div class="cp-trust-item">
           <span>🚚</span>
-          <span>Free shipping above ₹499 | Express Delivery across the country.</span>
+          <span>{{ section.settings.shipping_text | default: "Free shipping above ₹499 | Express Delivery across the country." }}</span>
         </div>
         <div class="cp-trust-subtext">
-          Trusted by 50 lakh+ customers worldwide.
+          {{ section.settings.trust_text | default: "Trusted by 50 lakh+ customers worldwide." }}
         </div>
       </div>
 
@@ -910,7 +965,31 @@
 {% schema %}
 {
   "name": "Custom Product Details",
-  "settings": [],
+  "settings": [
+    { "type": "text", "id": "variant_heading", "label": "Variant Section Heading", "default": "Pick Your Size & Combo" },
+    { "type": "text", "id": "variant_subheading", "label": "Variant Section Subheading", "default": "Select your favorite variant or combo pack for your wellness goal." },
+    { "type": "text", "id": "feature_pill_text", "label": "Feature Pill Badge Text", "default": "Plant Based Plastic Free" },
+    { "type": "text", "id": "left_badge_text", "label": "Left Top Badge Text", "default": "New Launch" },
+    { "type": "text", "id": "right_badge_text", "label": "Right Circular Badge Text", "default": "90 PYRAMID BAGS" },
+    { "type": "text", "id": "shipping_text", "label": "Shipping Trust Text", "default": "Free shipping above ₹499 | Express Delivery across the country." },
+    { "type": "text", "id": "trust_text", "label": "Customer Trust Text", "default": "Trusted by 50 lakh+ customers worldwide." }
+  ],
+  "blocks": [
+    {
+      "type": "custom_card",
+      "name": "Size / Combo Card",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Card Title", "default": "Transformation Pack" },
+        { "type": "text", "id": "size_tag", "label": "Size / Combo Badge", "default": "30 DAY KIT / 1 KG" },
+        { "type": "text", "id": "top_tag", "label": "Top Badge (e.g. BEST VALUE)", "default": "BEST VALUE" },
+        { "type": "text", "id": "price", "label": "Price", "default": "₹1,199" },
+        { "type": "text", "id": "compare_price", "label": "Compare Price", "default": "₹1,499" },
+        { "type": "text", "id": "discount", "label": "Discount Percentage", "default": "20" },
+        { "type": "image_picker", "id": "card_image", "label": "Card Image" },
+        { "type": "text", "id": "variant_id", "label": "Variant ID (Optional)" }
+      ]
+    }
+  ],
   "presets": [
     {
       "name": "Custom Product Details"
