@@ -197,21 +197,55 @@
   }
 
   .product-grid {
-    --product-grid-gap: var(--product-grid-gap-mobile);
-    --mobile-columns: 2; /* Default value */
-
+    --product-grid-gap: var(--product-grid-gap-mobile, 16px);
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--product-grid-gap);
-    margin: auto;
+    margin: 0;
+    width: 100%;
     padding: 0;
     list-style: none;
     isolation: isolate;
 
     @media screen and (min-width: 750px) {
-      --product-grid-gap: var(--product-grid-gap-desktop);
+      --product-grid-gap: var(--product-grid-gap-desktop, 20px);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
 
-      grid-template-columns: var(--product-grid-columns-desktop);
+  /* 4 cards in a row (Default view) */
+  .product-grid[product-grid-view='default'],
+  [product-grid-view='default'] {
+    @media screen and (min-width: 750px) {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+  }
+
+  /* 6 cards in a row (Zoom-out 6-column view) */
+  .product-grid[product-grid-view='zoom-out'],
+  [product-grid-view='zoom-out'] {
+    @media screen and (min-width: 750px) {
+      grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    }
+  }
+
+  @media screen and (max-width: 1024px) {
+    .product-grid[product-grid-view='default'],
+    [product-grid-view='default'] {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+    .product-grid[product-grid-view='zoom-out'],
+    [product-grid-view='zoom-out'] {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    .product-grid[product-grid-view='default'],
+    [product-grid-view='default'],
+    .product-grid[product-grid-view='zoom-out'],
+    [product-grid-view='zoom-out'] {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     }
   }
 
@@ -220,37 +254,13 @@
   }
 
   .product-grid__item {
-    border: var(--product-card-border-width) solid rgb(var(--color-border-rgb) / var(--product-card-border-opacity));
+    border: none;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   [product-grid-view='default'] .product-grid__item {
     padding-block: 0;
-  }
-
-  .product-grid--organic[product-grid-view='default'] .product-grid__item {
-    height: fit-content;
-  }
-
-  [product-grid-view='zoom-out'] .product-grid__card.product-grid__card {
-    row-gap: var(--padding-xs);
-  }
-
-  [product-grid-view='mobile-single'],
-  .product-grid-mobile--large {
-    @media screen and (max-width: 749px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  ul[product-grid-view='zoom-out'] .product-grid__card > * {
-    display: none;
-  }
-
-  [product-grid-view='zoom-out'] {
-    --product-grid-columns-desktop: repeat(
-      10,
-      minmax(clamp(50px, calc(100% - 9 * var(--product-grid-gap)) / 10, 80px), 1fr)
-    );
   }
 
   @media (prefers-reduced-motion: no-preference) {
