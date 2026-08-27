@@ -78,7 +78,7 @@
         "text_LmEx9h": {
           "type": "text",
           "settings": {
-            "text": "<p>India’s Everyday Chai, Made Extraordinary.</p>",
+            "text": "<p><strong>India’s Everyday Chai, Made Extraordinary.</strong></p>",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
@@ -107,7 +107,7 @@
       "name": "t:names.marquee_section",
       "settings": {
         "movement_direction": "normal",
-        "background_color": "#dfdee6",
+        "background_color": "#FBF5EA",
         "padding-block-start": 10,
         "padding-block-end": 10,
         "gap_between_elements": 24
